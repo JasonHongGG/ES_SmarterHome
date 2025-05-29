@@ -1,0 +1,7 @@
+../LCD/Src/i2c_lcd.c:14:6:lcd_send_cmd	1
+../LCD/Src/i2c_lcd.c:40:6:lcd_send_data	1
+../LCD/Src/i2c_lcd.c:64:6:lcd_clear	2
+../LCD/Src/i2c_lcd.c:84:6:lcd_gotoxy	5
+../LCD/Src/i2c_lcd.c:105:6:lcd_init	1
+../LCD/Src/i2c_lcd.c:135:6:lcd_puts	2
+../LCD/Src/i2c_lcd.c:146:6:lcd_putchar	1

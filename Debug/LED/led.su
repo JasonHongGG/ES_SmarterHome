@@ -1,0 +1,5 @@
+../LED/led.c:13:6:LED_Init	8	static
+../LED/led.c:20:6:LED_OS_Resources_Init	8	static
+../LED/led.c:26:6:setColor	16	static
+../LED/led.c:33:6:LEDHandler	24	static
+../LED/led.c:55:6:LEDTask	8	static

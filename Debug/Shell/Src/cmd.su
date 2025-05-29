@@ -1,0 +1,7 @@
+../Shell/Src/cmd.c:27:6:command_Init	16	static
+../Shell/Src/cmd.c:32:6:LEDChangeColor	32	static
+../Shell/Src/cmd.c:49:6:ESP32SendMsg	120	static
+../Shell/Src/cmd.c:65:6:LCDShowMsg	72	static
+../Shell/Src/cmd.c:103:13:CommandPrint	32	static
+../Shell/Src/cmd.c:114:16:PrintArgs	24	static
+../Shell/Src/cmd.c:124:6:CommandExecute	24	static

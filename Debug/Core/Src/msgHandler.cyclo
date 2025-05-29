@@ -1,0 +1,6 @@
+../Core/Src/msgHandler.c:21:6:MsgHandler_Init	1
+../Core/Src/msgHandler.c:26:6:MsgHandler_OS_Resources_Init	1
+../Core/Src/msgHandler.c:33:6:SendChar	1
+../Core/Src/msgHandler.c:38:6:SendMsg	3
+../Core/Src/msgHandler.c:63:5:ReceiveChar	3
+../Core/Src/msgHandler.c:76:5:ReceiveMsg	4

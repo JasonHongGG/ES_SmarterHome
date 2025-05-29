@@ -1,0 +1,6 @@
+../Core/Src/msgHandler.c:21:6:MsgHandler_Init	16	static
+../Core/Src/msgHandler.c:26:6:MsgHandler_OS_Resources_Init	8	static
+../Core/Src/msgHandler.c:33:6:SendChar	16	static
+../Core/Src/msgHandler.c:38:6:SendMsg	28	static
+../Core/Src/msgHandler.c:63:5:ReceiveChar	16	static
+../Core/Src/msgHandler.c:76:5:ReceiveMsg	32	static

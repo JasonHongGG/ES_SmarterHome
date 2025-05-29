@@ -1,0 +1,4 @@
+../LCD/Src/lcd2004.c:10:6:LCD2004_Init	1
+../LCD/Src/lcd2004.c:17:6:LCD2004_OS_Resources_Init	1
+../LCD/Src/lcd2004.c:23:6:LCDHandler	2
+../LCD/Src/lcd2004.c:54:6:LCDTemplateHandler	4

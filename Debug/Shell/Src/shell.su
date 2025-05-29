@@ -1,0 +1,2 @@
+../Shell/Src/shell.c:14:6:Shell_Init	24	static
+../Shell/Src/shell.c:24:6:ShellHandler	16	static
