@@ -41,3 +41,8 @@ void ShellHandler(void *pvParameters)
 		vTaskDelay(pdMS_TO_TICKS(500));
 	}
 }
+
+void CommandReceiver(void *pvParameters)
+{
+
+}

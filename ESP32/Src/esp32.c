@@ -20,13 +20,6 @@ void ESP32_Init(UART_HandleTypeDef* eps32_huart, UART_HandleTypeDef* log_huart)
 {
 	eps32_TxRx_huart = eps32_huart;
 	esp32_log_huart = log_huart;
-
-	// 啟動 Idle-Line DMA 接收
-    HAL_UARTEx_ReceiveToIdle_DMA(eps32_TxRx_huart,
-                                 (uint8_t*)ESP32_reveice_data,
-                                 sizeof(ESP32_reveice_data));
-    // 啟用半滿中斷 (選擇性，用於即時 debug)
-    __HAL_DMA_ENABLE_IT(eps32_TxRx_huart->hdmarx, DMA_IT_HT);
 }
 
 void ESP32_OS_Resources_Init()
@@ -34,6 +27,14 @@ void ESP32_OS_Resources_Init()
 	xESP32Queue = xQueueCreate(4, sizeof(ESP32MsgStruct));
 	xESP32ReceiverQueue = xQueueCreate(4, sizeof(ESP32MsgStruct));
 	xESP32Mutex = xSemaphoreCreateMutex();
+
+	// 啟動 Idle-Line DMA 接收
+    HAL_UARTEx_ReceiveToIdle_DMA(eps32_TxRx_huart,
+                                 (uint8_t*)ESP32_reveice_data,
+                                 sizeof(ESP32_reveice_data));
+    // 啟用半滿中斷 (選擇性，用於即時 debug)
+    // __HAL_DMA_ENABLE_IT(eps32_TxRx_huart->hdmarx, DMA_IT_HT);
+	__HAL_DMA_DISABLE_IT(eps32_TxRx_huart->hdmarx, DMA_IT_HT);
 }
 
 void ESP32Sender(void *pvParameters)
@@ -59,18 +60,21 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
   if (huart == eps32_TxRx_huart)
   {
     ESP32MsgStruct msg;
-    // 拷貝並終止字串
+	memset(msg.msg, 0, sizeof(msg.msg));
     memcpy(msg.msg, ESP32_reveice_data, Size);
     msg.msg[Size] = '\0';
+
     // 從 ISR 推送到 Queue
-    SendMsg(eps32_TxRx_huart, "HAL_UARTEx_RxEventCallback : %s \n\r", msg.msg);
-    BaseType_t xHigherPriorityTaskWoken = pdFALSE;
-    xQueueSendFromISR(xESP32ReceiverQueue, &msg, &xHigherPriorityTaskWoken);
-    portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
-    // 重新啟動下一次 Idle-DMA 偵測
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	xQueueSendFromISR(xESP32ReceiverQueue, &msg, &xHigherPriorityTaskWoken);
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+
+	memset(ESP32_reveice_data, 0, sizeof(ESP32_reveice_data));
     HAL_UARTEx_ReceiveToIdle_DMA(eps32_TxRx_huart,
                                  (uint8_t*)ESP32_reveice_data,
                                  sizeof(ESP32_reveice_data));
+	__HAL_DMA_DISABLE_IT(eps32_TxRx_huart->hdmarx, DMA_IT_HT);
+	
   }
 }
 
@@ -101,10 +105,9 @@ void ESP32Receiver(void *pvParameters)
   ESP32MsgStruct rxMsg;
   while (1)
   {
-    if (xQueueReceive(xESP32Queue, &rxMsg, portMAX_DELAY) == pdPASS)
+    if (xQueueReceive(xESP32ReceiverQueue, &rxMsg, portMAX_DELAY) == pdPASS)
     {
       SendMsg(esp32_log_huart, "\r\nReceive : ESP32: %s\r\n", rxMsg.msg);
     }
-    vTaskDelay(pdMS_TO_TICKS(500));
   }
 }
