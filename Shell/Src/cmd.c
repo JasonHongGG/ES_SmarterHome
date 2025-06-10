@@ -3,16 +3,19 @@
 #include "lcd2004.h"
 #include "esp32.h"
 #include "led.h"
+#include "sd.h"
 extern UART_HandleTypeDef* shell_huart;
 extern QueueHandle_t xLCDQueue;
 extern QueueHandle_t xESP32Queue;
 extern QueueHandle_t xLEDQueue;
+extern QueueHandle_t xSDQueue;
 
 static void CommandPrint(uint8_t argc, char **argv);
 static uint8_t PrintArgs(uint8_t argc, char **argv);
 void LCDShowMsg(uint8_t argc, char **argv);
 void ESP32SendMsg(uint8_t argc, char **argv);
 void LEDChangeColor(uint8_t argc, char **argv);
+void ParseStorage(uint8_t argc, char **argv);
 
 static const CmdStruct CommandList[] =
 {
@@ -21,12 +24,28 @@ static const CmdStruct CommandList[] =
 	{"lcd", "Show message on LCD2004 (Command => lcd row column message)", LCDShowMsg},
 	{"esp32", "Send message to ESP32 (Command => esp32 message)", ESP32SendMsg},
 	{"led", "Change LED color (Command => led red green blue)", LEDChangeColor},
+	{"sd", "Parse file from SD (Command => sd fileName)", ParseStorage},
 	{NULL, NULL, NULL},
 };
 
 void command_Init(UART_HandleTypeDef* huart)
 {
 	shell_huart = huart;
+}
+
+void ParseStorage(uint8_t argc, char **argv)
+{
+	if(argc < 2) {
+		SendMsg(shell_huart, "\r\ParseStorage: Not enough arguments for this command.\r\n");
+		return;
+	}
+	SDMsgStruct sdMsg;
+	strncpy(sdMsg.msg, argv[1], sizeof(sdMsg.msg)-1);
+	sdMsg.msg[sizeof(sdMsg.msg)-1] = '\0';
+
+	if (xQueueSend(xSDQueue, &sdMsg, 0) != pdPASS) {
+		SendMsg(shell_huart, "\r\ParseStorage: Queue full or error.\r\n");
+	}
 }
 
 void LEDChangeColor(uint8_t argc, char **argv)
@@ -53,7 +72,7 @@ void ESP32SendMsg(uint8_t argc, char **argv)
 		return;
 	}
 
-	ESP32MsgStruct esp32Msg;
+	SDMsgStruct esp32Msg;
 	strncpy(esp32Msg.msg, argv[1], sizeof(esp32Msg.msg)-1);
 	esp32Msg.msg[sizeof(esp32Msg.msg)-1] = '\0';
 

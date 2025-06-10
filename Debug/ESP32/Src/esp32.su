@@ -1,4 +1,5 @@
-../ESP32/Src/esp32.c:18:6:ESP32_Init	16	static
-../ESP32/Src/esp32.c:24:6:ESP32_OS_Resources_Init	8	static
-../ESP32/Src/esp32.c:30:6:ESP32Sender	120	static
-../ESP32/Src/esp32.c:48:6:ESP32Receiver	16	static
+../ESP32/Src/esp32.c:19:6:ESP32_Init	16	static
+../ESP32/Src/esp32.c:32:6:ESP32_OS_Resources_Init	8	static
+../ESP32/Src/esp32.c:39:6:ESP32Sender	120	static
+../ESP32/Src/esp32.c:57:6:HAL_UARTEx_RxEventCallback	120	static,ignoring_inline_asm
+../ESP32/Src/esp32.c:99:6:ESP32Receiver	120	static

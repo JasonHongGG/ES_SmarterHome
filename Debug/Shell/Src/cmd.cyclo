@@ -1,7 +1,8 @@
-../Shell/Src/cmd.c:27:6:command_Init	1
-../Shell/Src/cmd.c:32:6:LEDChangeColor	3
-../Shell/Src/cmd.c:49:6:ESP32SendMsg	3
-../Shell/Src/cmd.c:65:6:LCDShowMsg	10
-../Shell/Src/cmd.c:103:13:CommandPrint	2
-../Shell/Src/cmd.c:114:16:PrintArgs	2
-../Shell/Src/cmd.c:124:6:CommandExecute	6
+../Shell/Src/cmd.c:31:6:command_Init	1
+../Shell/Src/cmd.c:36:6:ParseStorage	3
+../Shell/Src/cmd.c:51:6:LEDChangeColor	3
+../Shell/Src/cmd.c:68:6:ESP32SendMsg	3
+../Shell/Src/cmd.c:84:6:LCDShowMsg	10
+../Shell/Src/cmd.c:122:13:CommandPrint	2
+../Shell/Src/cmd.c:133:16:PrintArgs	2
+../Shell/Src/cmd.c:143:6:CommandExecute	6

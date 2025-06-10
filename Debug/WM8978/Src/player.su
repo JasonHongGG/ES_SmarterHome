@@ -1,0 +1,3 @@
+../WM8978/Src/player.c:29:19:WM8978_Register_Wirter	40	static
+../WM8978/Src/player.c:38:6:my_WM8978_Init	16	static
+../WM8978/Src/player.c:104:6:WM8978_Palyer	32	static

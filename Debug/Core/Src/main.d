@@ -49,7 +49,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../FreeRTOS/include/queue.h ../FreeRTOS/include/task.h \
  ../FreeRTOS/include/queue.h ../Core/Inc/msgHandler.h \
  ../Shell/Inc/shell.h ../LCD/Inc/lcd2004.h ../LCD/Inc/i2c_lcd.h \
- ../ESP32/Inc/esp32.h ../LED/led.h
+ ../ESP32/Inc/esp32.h ../LED/led.h ../SD/Inc/sd.h ../WM8978/Inc/player.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -114,3 +114,5 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../LCD/Inc/i2c_lcd.h:
 ../ESP32/Inc/esp32.h:
 ../LED/led.h:
+../SD/Inc/sd.h:
+../WM8978/Inc/player.h:

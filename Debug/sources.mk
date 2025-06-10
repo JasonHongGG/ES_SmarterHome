@@ -35,5 +35,7 @@ LCD/Src \
 LED \
 Middlewares/Third_Party/FatFs/src \
 Middlewares/Third_Party/FatFs/src/option \
+SD/Src \
 Shell/Src \
+WM8978/Src \
 

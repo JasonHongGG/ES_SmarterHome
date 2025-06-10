@@ -28,8 +28,8 @@
 #include "user_diskio_spi.h"
 
 // hong
-#include "msgHandler.h"
-extern UART_HandleTypeDef huart2;
+// #include "msgHandler.h"
+// extern UART_HandleTypeDef huart2;
 //Make sure you set #define SD_SPI_HANDLE as some hspix in main.h
 //Make sure you set #define SD_CS_GPIO_Port as some GPIO port in main.h
 //Make sure you set #define SD_CS_Pin as some GPIO pin in main.h
@@ -146,54 +146,54 @@ void xmit_spi_multi (
 /* Wait for card ready                                                   */
 /*-----------------------------------------------------------------------*/
 
-// static
-// int wait_ready (	/* 1:Ready, 0:Timeout */
-// 	UINT wt			/* Timeout [ms] */
-// )
-// {
-// 	BYTE d;
-// 	//wait_ready needs its own timer, unfortunately, so it can't use the
-// 	//spi_timer functions
-// 	uint32_t waitSpiTimerTickStart;
-// 	uint32_t waitSpiTimerTickDelay;
-
-// 	waitSpiTimerTickStart = HAL_GetTick();
-// 	waitSpiTimerTickDelay = (uint32_t)wt;
-// 	do {
-// 		d = xchg_spi(0xFF);
-// 		/* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
-// 	} while (d != 0xFF && ((HAL_GetTick() - waitSpiTimerTickStart) < waitSpiTimerTickDelay));	/* Wait for card goes ready or timeout */
-
-// 	return (d == 0xFF) ? 1 : 0;
-// }
-
-// hong
-static int wait_ready (	/* 1:Ready, 0:Timeout */
-    UINT wt			/* Timeout [ms] */
+static
+int wait_ready (	/* 1:Ready, 0:Timeout */
+	UINT wt			/* Timeout [ms] */
 )
 {
-    BYTE d;
-    uint32_t waitSpiTimerTickStart;
-    uint32_t waitSpiTimerTickDelay;
-    uint32_t elapsed_time;
+	BYTE d;
+	//wait_ready needs its own timer, unfortunately, so it can't use the
+	//spi_timer functions
+	uint32_t waitSpiTimerTickStart;
+	uint32_t waitSpiTimerTickDelay;
 
-    waitSpiTimerTickStart = HAL_GetTick();
-    waitSpiTimerTickDelay = (uint32_t)wt;
-    do {
-        d = xchg_spi(0xFF);
-        /* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
-    } while (d != 0xFF && ((HAL_GetTick() - waitSpiTimerTickStart) < waitSpiTimerTickDelay));	/* Wait for card goes ready or timeout */
+	waitSpiTimerTickStart = HAL_GetTick();
+	waitSpiTimerTickDelay = (uint32_t)wt;
+	do {
+		d = xchg_spi(0xFF);
+		/* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
+	} while (d != 0xFF && ((HAL_GetTick() - waitSpiTimerTickStart) < waitSpiTimerTickDelay));	/* Wait for card goes ready or timeout */
 
-    elapsed_time = HAL_GetTick() - waitSpiTimerTickStart;
-    if (d == 0xFF) {
-        // Optionally log success, but can be too verbose:
-        SendMsg(&huart2, "wait_ready: OK after %lu ms (limit %u ms)\r\n", elapsed_time, wt);
-        return 1;
-    } else {
-        SendMsg(&huart2, "wait_ready: TIMEOUT after %lu ms (limit %u ms)\r\n", elapsed_time, wt); // DEBUG
-        return 0;
-    }
+	return (d == 0xFF) ? 1 : 0;
 }
+
+// hong
+// static int wait_ready (	/* 1:Ready, 0:Timeout */
+//     UINT wt			/* Timeout [ms] */
+// )
+// {
+//     BYTE d;
+//     uint32_t waitSpiTimerTickStart;
+//     uint32_t waitSpiTimerTickDelay;
+//     uint32_t elapsed_time;
+
+//     waitSpiTimerTickStart = HAL_GetTick();
+//     waitSpiTimerTickDelay = (uint32_t)wt;
+//     do {
+//         d = xchg_spi(0xFF);
+//         /* This loop takes a time. Insert rot_rdq() here for multitask envilonment. */
+//     } while (d != 0xFF && ((HAL_GetTick() - waitSpiTimerTickStart) < waitSpiTimerTickDelay));	/* Wait for card goes ready or timeout */
+
+//     elapsed_time = HAL_GetTick() - waitSpiTimerTickStart;
+//     if (d == 0xFF) {
+//         // Optionally log success, but can be too verbose:
+//         SendMsg(&huart2, "wait_ready: OK after %lu ms (limit %u ms)\r\n", elapsed_time, wt);
+//         return 1;
+//     } else {
+//         SendMsg(&huart2, "wait_ready: TIMEOUT after %lu ms (limit %u ms)\r\n", elapsed_time, wt); // DEBUG
+//         return 0;
+//     }
+// }
 
 
 
@@ -215,32 +215,32 @@ void despiselect (void)
 /* Select card and wait for ready                                        */
 /*-----------------------------------------------------------------------*/
 
-// static
-// int spiselect (void)	/* 1:OK, 0:Timeout */
-// {
-// 	CS_LOW();		/* Set CS# low */
-// 	xchg_spi(0xFF);	/* Dummy clock (force DO enabled) */
-// 	if (wait_ready(500)) return 1;	/* Wait for card ready */
+static
+int spiselect (void)	/* 1:OK, 0:Timeout */
+{
+	CS_LOW();		/* Set CS# low */
+	xchg_spi(0xFF);	/* Dummy clock (force DO enabled) */
+	if (wait_ready(500)) return 1;	/* Wait for card ready */
 
-// 	despiselect();
-// 	return 0;	/* Timeout */
-// }
+	despiselect();
+	return 0;	/* Timeout */
+}
 
 // hong
-static int spiselect (void)	/* 1:OK, 0:Timeout */
-{
-    CS_LOW();		/* Set CS# low */
-    xchg_spi(0xFF);	/* Dummy clock (force DO enabled) */
-    // SendMsg(&huart2, "spiselect: calling wait_ready(500)\r\n"); // Can be too verbose
-    if (wait_ready(5000)) { // Original timeout
-        // SendMsg(&huart2, "spiselect: wait_ready OK\r\n"); // Can be too verbose
-        return 1;	/* Wait for card ready */
-    }
+// static int spiselect (void)	/* 1:OK, 0:Timeout */
+// {
+//     CS_LOW();		/* Set CS# low */
+//     xchg_spi(0xFF);	/* Dummy clock (force DO enabled) */
+//     // SendMsg(&huart2, "spiselect: calling wait_ready(500)\r\n"); // Can be too verbose
+//     if (wait_ready(5000)) { // Original timeout
+//         // SendMsg(&huart2, "spiselect: wait_ready OK\r\n"); // Can be too verbose
+//         return 1;	/* Wait for card ready */
+//     }
 
-    SendMsg(&huart2, "spiselect: wait_ready(500) FAILED\r\n"); // DEBUG
-    despiselect();
-    return 0;	/* Timeout */
-}
+//     SendMsg(&huart2, "spiselect: wait_ready(500) FAILED\r\n"); // DEBUG
+//     despiselect();
+//     return 0;	/* Timeout */
+// }
 
 
 /*-----------------------------------------------------------------------*/
@@ -364,165 +364,162 @@ BYTE send_cmd (		/* Return value: R1 resp (bit7==1:Failed to send) */
 /* Initialize disk drive                                                 */
 /*-----------------------------------------------------------------------*/
 
-// inline DSTATUS USER_SPI_initialize (
-// 	BYTE drv		/* Physical drive number (0) */
-// )
-// {
-// 	BYTE n, cmd, ty, ocr[4];
+inline DSTATUS USER_SPI_initialize (
+	BYTE drv		/* Physical drive number (0) */
+)
+{
+	BYTE n, cmd, ty, ocr[4];
 
-// 	if (drv != 0) return STA_NOINIT;		/* Supports only drive 0 */
-// 	//assume SPI already init init_spi();	/* Initialize SPI */
+	if (drv != 0) return STA_NOINIT;		/* Supports only drive 0 */
+	//assume SPI already init init_spi();	/* Initialize SPI */
 
-// 	if (Stat & STA_NODISK) return Stat;	/* Is card existing in the soket? */
+	if (Stat & STA_NODISK) return Stat;	/* Is card existing in the soket? */
 
-// 	FCLK_SLOW();
-// 	for (n = 10; n; n--) xchg_spi(0xFF);	/* Send 80 dummy clocks */
+	FCLK_SLOW();
+	for (n = 10; n; n--) xchg_spi(0xFF);	/* Send 80 dummy clocks */
 
-// 	ty = 0;
-// 	if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI/Idle state */
-// 		SPI_Timer_On(1000);					/* Initialization timeout = 1 sec */
-// 		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
-// 			for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get 32 bit return value of R7 resp */
-// 			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* Is the card supports vcc of 2.7-3.6V? */
-// 				while (SPI_Timer_Status() && send_cmd(ACMD41, 1UL << 30)) ;	/* Wait for end of initialization with ACMD41(HCS) */
-// 				SendMsg(&huart2, "while (SPI_Timer_Status() && send_cmd(ACMD41, 1UL << 30))\r\n"); // DEBUG
-// 				if (SPI_Timer_Status() && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
-// 					for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);
-// 					ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Card id SDv2 */
-// 				} else {
-// 					SendMsg(&huart2, "else while (SPI_Timer_Status() && send_cmd(ACMD41, 1UL << 30))\r\n"); // DEBUG
-// 				}
-// 			}
-// 		} else {	/* Not SDv2 card */
-// 			if (send_cmd(ACMD41, 0) <= 1) 	{	/* SDv1 or MMC? */
-// 				ty = CT_SD1; cmd = ACMD41;	/* SDv1 (ACMD41(0)) */
-// 			} else {
-// 				ty = CT_MMC; cmd = CMD1;	/* MMCv3 (CMD1(0)) */
-// 			}
-// 			while (SPI_Timer_Status() && send_cmd(cmd, 0)) ;		/* Wait for end of initialization */
-// 			if (!SPI_Timer_Status() || send_cmd(CMD16, 512) != 0)	/* Set block length: 512 */
-// 				ty = 0;
-// 		}
-// 	}
-// 	CardType = ty;	/* Card type */
-// 	despiselect();
+	ty = 0;
+	if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI/Idle state */
+		SPI_Timer_On(1000);					/* Initialization timeout = 1 sec */
+		if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
+			for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get 32 bit return value of R7 resp */
+			if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* Is the card supports vcc of 2.7-3.6V? */
+				while (SPI_Timer_Status() && send_cmd(ACMD41, 1UL << 30)) ;	/* Wait for end of initialization with ACMD41(HCS) */
+				if (SPI_Timer_Status() && send_cmd(CMD58, 0) == 0) {		/* Check CCS bit in the OCR */
+					for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);
+					ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Card id SDv2 */
+				}
+			}
+		} else {	/* Not SDv2 card */
+			if (send_cmd(ACMD41, 0) <= 1) 	{	/* SDv1 or MMC? */
+				ty = CT_SD1; cmd = ACMD41;	/* SDv1 (ACMD41(0)) */
+			} else {
+				ty = CT_MMC; cmd = CMD1;	/* MMCv3 (CMD1(0)) */
+			}
+			while (SPI_Timer_Status() && send_cmd(cmd, 0)) ;		/* Wait for end of initialization */
+			if (!SPI_Timer_Status() || send_cmd(CMD16, 512) != 0)	/* Set block length: 512 */
+				ty = 0;
+		}
+	}
+	CardType = ty;	/* Card type */
+	despiselect();
 
-// 	if (ty) {			/* OK */
-// 		FCLK_FAST();			/* Set fast clock */
-// 		Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
-// 	} else {			/* Failed */
-// 		Stat = STA_NOINIT;
-// 	}
+	if (ty) {			/* OK */
+		FCLK_FAST();			/* Set fast clock */
+		Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
+	} else {			/* Failed */
+		Stat = STA_NOINIT;
+	}
 
-// 	return Stat;
-// }
+	return Stat;
+}
 
 // hong
 
-inline DSTATUS USER_SPI_initialize (
-    BYTE drv /* Physical drive number (0) */
-)
-{
-    BYTE n, ty, cmd, ocr[4];
+// inline DSTATUS USER_SPI_initialize (
+//     BYTE drv /* Physical drive number (0) */
+// )
+// {
+//     BYTE n, ty, cmd, ocr[4];
 
-    if(drv) return STA_NOINIT;			/* Supports only drive 0 */
-    if(Stat & STA_NODISK) return Stat;	/* No card in the socket */
+//     if(drv) return STA_NOINIT;			/* Supports only drive 0 */
+//     if(Stat & STA_NODISK) return Stat;	/* No card in the socket */
 
-    FCLK_SLOW();
-    for (n = 10; n; n--) xchg_spi(0xFF);	/* Send 80 dummy clocks */
+//     FCLK_SLOW();
+//     for (n = 10; n; n--) xchg_spi(0xFF);	/* Send 80 dummy clocks */
 
-    ty = 0;
-    SendMsg(&huart2, "CMD0 sent...\r\n"); // DEBUG
-    if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI/Idle state */
-        SendMsg(&huart2, "CMD0 OK (R1=0x01)\r\n"); // DEBUG
-        SPI_Timer_On(3000);					/* Initialization timeout = 1 sec */
-        SendMsg(&huart2, "CMD8 sent...\r\n"); // DEBUG
-        if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
-            SendMsg(&huart2, "CMD8 OK (R1=0x01)\r\n"); // DEBUG
-            for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get 32 bit return value of R7 resp */
-            SendMsg(&huart2, "CMD8 R7: %02X %02X %02X %02X\r\n", ocr[0], ocr[1], ocr[2], ocr[3]); // DEBUG
-            if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* Is the card supports vcc of 2.7-3.6V? */
-                SendMsg(&huart2, "CMD8 Voltage OK\r\n"); // DEBUG
-                BYTE acmd41_r1 = 0xFF; // Initialize with a non-ready state
-                SendMsg(&huart2, "Starting ACMD41 polling. Timeout: %lu ms\r\n", spiTimerTickDelay); // DEBUG
-                while (SPI_Timer_Status()) {
-                    acmd41_r1 = send_cmd(ACMD41, 1UL << 30); /* Send ACMD41 with HCS bit */
-                    SendMsg(&huart2, "ACMD41 attempt, R1=0x%02X\r\n", acmd41_r1); // DEBUG
-                    if (acmd41_r1 == 0x00 || acmd41_r1 == 0xFF) break; /* Initialization completed */
-                    if (acmd41_r1 != 0x01) {      /* Not busy (0x01) and not ready (0x00) -> error from send_cmd (e.g., 0xFF) */
-                        SendMsg(&huart2, "ACMD41 poll: send_cmd returned error 0x%02X. Aborting poll.\r\n", acmd41_r1); // DEBUG
-                        //break; 
-                    }
-                    /* Card is busy (R1=0x01), continue polling */
-                    HAL_Delay(200); // Increased delay between polls
-                }
+//     ty = 0;
+//     SendMsg(&huart2, "CMD0 sent...\r\n"); // DEBUG
+//     if (send_cmd(CMD0, 0) == 1) {			/* Put the card SPI/Idle state */
+//         SendMsg(&huart2, "CMD0 OK (R1=0x01)\r\n"); // DEBUG
+//         SPI_Timer_On(3000);					/* Initialization timeout = 1 sec */
+//         SendMsg(&huart2, "CMD8 sent...\r\n"); // DEBUG
+//         if (send_cmd(CMD8, 0x1AA) == 1) {	/* SDv2? */
+//             SendMsg(&huart2, "CMD8 OK (R1=0x01)\r\n"); // DEBUG
+//             for (n = 0; n < 4; n++) ocr[n] = xchg_spi(0xFF);	/* Get 32 bit return value of R7 resp */
+//             SendMsg(&huart2, "CMD8 R7: %02X %02X %02X %02X\r\n", ocr[0], ocr[1], ocr[2], ocr[3]); // DEBUG
+//             if (ocr[2] == 0x01 && ocr[3] == 0xAA) {				/* Is the card supports vcc of 2.7-3.6V? */
+//                 SendMsg(&huart2, "CMD8 Voltage OK\r\n"); // DEBUG
+//                 BYTE acmd41_r1 = 0xFF; // Initialize with a non-ready state
+//                 SendMsg(&huart2, "Starting ACMD41 polling. Timeout: %lu ms\r\n", spiTimerTickDelay); // DEBUG
+//                 while (SPI_Timer_Status()) {
+//                     acmd41_r1 = send_cmd(ACMD41, 1UL << 30); /* Send ACMD41 with HCS bit */
+//                     SendMsg(&huart2, "ACMD41 attempt, R1=0x%02X\r\n", acmd41_r1); // DEBUG
+//                     if (acmd41_r1 == 0x00 || acmd41_r1 == 0xFF) break; /* Initialization completed */
+//                     if (acmd41_r1 != 0x01) {      /* Not busy (0x01) and not ready (0x00) -> error from send_cmd (e.g., 0xFF) */
+//                         SendMsg(&huart2, "ACMD41 poll: send_cmd returned error 0x%02X. Aborting poll.\r\n", acmd41_r1); // DEBUG
+//                         //break; 
+//                     }
+//                     /* Card is busy (R1=0x01), continue polling */
+//                     HAL_Delay(200); // Increased delay between polls
+//                 }
 
-                if ((acmd41_r1 == 0x00 || acmd41_r1 == 0xFF) && SPI_Timer_Status()) { /* Check if ready and timer has not expired */
-                    SendMsg(&huart2, "ACMD41 OK (R1=0x00 || 0xFF)\r\n"); // DEBUG
-                    BYTE cmd58_r1 = send_cmd(CMD58, 0);
-					if (cmd58_r1 == 0 || cmd58_r1 == 0xFF) {		/* Check CCS bit in the OCR */
-						SendMsg(&huart2, "CMD58 OK (R1=0x00 || 0xFF)\r\n"); // DEBUG
-						SendMsg(&huart2, "Reading OCR bytes...\r\n"); // DEBUG
-						for (n = 0; n < 4; n++) {
-							ocr[n] = xchg_spi(0xFF); // Read one byte of OCR
-							SendMsg(&huart2, "OCR byte %d: 0x%02X\r\n", n, ocr[n]); // DEBUG
-						}
-						SendMsg(&huart2, "OCR raw: %02X %02X %02X %02X\r\n", ocr[0], ocr[1], ocr[2], ocr[3]); // DEBUG
-						ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Card id SDv2 */
-						SendMsg(&huart2, "Determined ty: 0x%02X based on ocr[0]=0x%02X\r\n", ty, ocr[0]); // DEBUG
-					} else {
-                        SendMsg(&huart2, "CMD58 failed after successful ACMD41 (cmd58_r1 : %d)\r\n", cmd58_r1); // DEBUG
-                        ty = 0;
-                    }
-                } else { /* ACMD41 timed out or failed with an error */
-                    if (!SPI_Timer_Status()) {
-                        SendMsg(&huart2, "ACMD41 timed out (main timer %lu ms expired). Last R1=0x%02X\r\n", spiTimerTickDelay, acmd41_r1); // DEBUG
-                    } else { 
-                         SendMsg(&huart2, "ACMD41 poll failed. Last R1=0x%02X (main timer OK)\r\n", acmd41_r1); // DEBUG
-                    }
-                    ty = 0; // Ensure ty is 0 if ACMD41 didn't complete successfully
-                }
-            } else {
-                SendMsg(&huart2, "CMD8 Voltage mismatch\r\n"); // DEBUG
-            }
-        } else {	/* Not SDv2 card */
-            SendMsg(&huart2, "CMD8 failed (not R1=0x01), could be SDv1/MMC\r\n"); // DEBUG
-            if (send_cmd(ACMD41, 0) <= 1) 	{	/* SDv1 or MMC? */
-                SendMsg(&huart2, "ACMD41 (for SDv1) sent\r\n"); // DEBUG
-                ty = CT_SD1; cmd = ACMD41;	/* SDv1 (ACMD41(0)) */
-            } else {
-                SendMsg(&huart2, "CMD1 (for MMC) sent\r\n"); // DEBUG
-                ty = CT_MMC; cmd = CMD1;	/* MMCv3 (CMD1(0)) */
-            }
-            while (SPI_Timer_Status() && send_cmd(cmd, 0)) { /* Wait for end of initialization */
-                SendMsg(&huart2, "SDv1/MMC init pending...\r\n"); // DEBUG
-                HAL_Delay(10); // Small delay
-            }
-            if (!SPI_Timer_Status() || send_cmd(CMD16, 512) != 0) {	/* Set block length: 512 */
-                SendMsg(&huart2, "SDv1/MMC init timeout or CMD16 failed\r\n"); // DEBUG
-                ty = 0;
-            } else {
-                SendMsg(&huart2, "SDv1/MMC CMD16 OK\r\n"); // DEBUG
-            }
-        }
-    } else {
-        SendMsg(&huart2, "CMD0 failed (not R1=0x01)\r\n"); // DEBUG
-    }
+//                 if ((acmd41_r1 == 0x00 || acmd41_r1 == 0xFF) && SPI_Timer_Status()) { /* Check if ready and timer has not expired */
+//                     SendMsg(&huart2, "ACMD41 OK (R1=0x00 || 0xFF)\r\n"); // DEBUG
+//                     BYTE cmd58_r1 = send_cmd(CMD58, 0);
+// 					if (cmd58_r1 == 0 || cmd58_r1 == 0xFF) {		/* Check CCS bit in the OCR */
+// 						SendMsg(&huart2, "CMD58 OK (R1=0x00 || 0xFF)\r\n"); // DEBUG
+// 						SendMsg(&huart2, "Reading OCR bytes...\r\n"); // DEBUG
+// 						for (n = 0; n < 4; n++) {
+// 							ocr[n] = xchg_spi(0xFF); // Read one byte of OCR
+// 							SendMsg(&huart2, "OCR byte %d: 0x%02X\r\n", n, ocr[n]); // DEBUG
+// 						}
+// 						SendMsg(&huart2, "OCR raw: %02X %02X %02X %02X\r\n", ocr[0], ocr[1], ocr[2], ocr[3]); // DEBUG
+// 						ty = (ocr[0] & 0x40) ? CT_SD2 | CT_BLOCK : CT_SD2;	/* Card id SDv2 */
+// 						SendMsg(&huart2, "Determined ty: 0x%02X based on ocr[0]=0x%02X\r\n", ty, ocr[0]); // DEBUG
+// 					} else {
+//                         SendMsg(&huart2, "CMD58 failed after successful ACMD41 (cmd58_r1 : %d)\r\n", cmd58_r1); // DEBUG
+//                         ty = 0;
+//                     }
+//                 } else { /* ACMD41 timed out or failed with an error */
+//                     if (!SPI_Timer_Status()) {
+//                         SendMsg(&huart2, "ACMD41 timed out (main timer %lu ms expired). Last R1=0x%02X\r\n", spiTimerTickDelay, acmd41_r1); // DEBUG
+//                     } else { 
+//                          SendMsg(&huart2, "ACMD41 poll failed. Last R1=0x%02X (main timer OK)\r\n", acmd41_r1); // DEBUG
+//                     }
+//                     ty = 0; // Ensure ty is 0 if ACMD41 didn't complete successfully
+//                 }
+//             } else {
+//                 SendMsg(&huart2, "CMD8 Voltage mismatch\r\n"); // DEBUG
+//             }
+//         } else {	/* Not SDv2 card */
+//             SendMsg(&huart2, "CMD8 failed (not R1=0x01), could be SDv1/MMC\r\n"); // DEBUG
+//             if (send_cmd(ACMD41, 0) <= 1) 	{	/* SDv1 or MMC? */
+//                 SendMsg(&huart2, "ACMD41 (for SDv1) sent\r\n"); // DEBUG
+//                 ty = CT_SD1; cmd = ACMD41;	/* SDv1 (ACMD41(0)) */
+//             } else {
+//                 SendMsg(&huart2, "CMD1 (for MMC) sent\r\n"); // DEBUG
+//                 ty = CT_MMC; cmd = CMD1;	/* MMCv3 (CMD1(0)) */
+//             }
+//             while (SPI_Timer_Status() && send_cmd(cmd, 0)) { /* Wait for end of initialization */
+//                 SendMsg(&huart2, "SDv1/MMC init pending...\r\n"); // DEBUG
+//                 HAL_Delay(10); // Small delay
+//             }
+//             if (!SPI_Timer_Status() || send_cmd(CMD16, 512) != 0) {	/* Set block length: 512 */
+//                 SendMsg(&huart2, "SDv1/MMC init timeout or CMD16 failed\r\n"); // DEBUG
+//                 ty = 0;
+//             } else {
+//                 SendMsg(&huart2, "SDv1/MMC CMD16 OK\r\n"); // DEBUG
+//             }
+//         }
+//     } else {
+//         SendMsg(&huart2, "CMD0 failed (not R1=0x01)\r\n"); // DEBUG
+//     }
 
-    CardType = ty;
-    despiselect();
+//     CardType = ty;
+//     despiselect();
 
-    if (ty) {			/* OK */
-        SendMsg(&huart2, "SD Card Initialized. Type: %02X\r\n", ty); // DEBUG
-        FCLK_FAST();			/* Set fast clock */
-        Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
-    } else {			/* Failed */
-        SendMsg(&huart2, "SD Card Initialization FAILED. ty=0\r\n"); // DEBUG
-        Stat |= STA_NOINIT;
-    }
+//     if (ty) {			/* OK */
+//         SendMsg(&huart2, "SD Card Initialized. Type: %02X\r\n", ty); // DEBUG
+//         FCLK_FAST();			/* Set fast clock */
+//         Stat &= ~STA_NOINIT;	/* Clear STA_NOINIT flag */
+//     } else {			/* Failed */
+//         SendMsg(&huart2, "SD Card Initialization FAILED. ty=0\r\n"); // DEBUG
+//         Stat |= STA_NOINIT;
+//     }
 
-    return Stat;
-}
+//     return Stat;
+// }
 
 /*-----------------------------------------------------------------------*/
 /* Get disk status                                                       */

@@ -1,0 +1,7 @@
+../SD/Src/sd.c:19:6:SD_Init	16	static
+../SD/Src/sd.c:26:6:SD_OS_Resources_Init	8	static
+../SD/Src/sd.c:32:9:StorageParse	144	static
+../SD/Src/sd.c:115:10:GetFileNumber	4	static
+../SD/Src/sd.c:121:6:SDParseHandler	120	static
+../SD/Src/sd.c:134:6:Mount_SD	16	static
+../SD/Src/sd.c:145:6:Unmount_SD	16	static

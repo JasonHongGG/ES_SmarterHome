@@ -37,7 +37,8 @@
 #include "lcd2004.h"
 #include "esp32.h"
 #include "led.h"
-//#include "player.h"
+#include "sd.h"
+#include "player.h"
 
 /* USER CODE END Includes */
 
@@ -60,6 +61,8 @@ I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
 
 I2S_HandleTypeDef hi2s3;
+DMA_HandleTypeDef hdma_spi3_tx;
+DMA_HandleTypeDef hdma_i2s3_ext_rx;
 
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
@@ -76,6 +79,7 @@ UART_HandleTypeDef huart3;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
@@ -122,18 +126,6 @@ void MEMS_Read(uint8_t address, uint8_t *data)
   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_SET);
 }
 
-
-void SDCARD_Test(void *pvParameters){
-	SendMsg(&huart2, "SDCARDTest START!\r\n");
-	FATFS fs;
-
-	FRESULT res = f_mount(&fs, "", 1);
-	if (res != FR_OK) {
-		SendMsg(&huart2, "SD mount failed with error code: %d\r\n", res);
-	} else {
-		SendMsg(&huart2, "SD mounted!\r\n");
-	}
-}
 #define AUDIO_BUFFER_SIZE 2048
 uint16_t audio_buffer[AUDIO_BUFFER_SIZE];
 void WM8978_Demo(void) {
@@ -171,6 +163,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
@@ -186,26 +179,29 @@ int main(void)
   MsgHandler_Init(&huart2);
   ESP32_Init(&huart3, &huart2);
   LCD2004_Init(&hi2c1, 0x4E);
-  Shell_Init(&huart2);
   LED_Init();
+  SD_Init(&huart2);
+  Shell_Init(&huart2);
 
-// my_WM8978_Init();
+
+//  my_WM8978_Init();
   //OS Resource
   MsgHandler_OS_Resources_Init();
   ESP32_OS_Resources_Init();
   LCD2004_OS_Resources_Init();
   LED_OS_Resources_Init();
+  SD_OS_Resources_Init();
 
-// WM8978_Palyer();
+//   WM8978_Palyer();
   //Task
   xTaskCreate(ESP32Sender, "ESP32Sender", 128, NULL, 1, NULL);
-  xTaskCreate(ESP32Receiver, "ESP32Receiver", 128, NULL, 1, NULL);
+  xTaskCreate(ESP32Receiver, "ESP32Receiver", 256, NULL, 2, NULL);
   xTaskCreate(LCDHandler, "LCDHandler", 128, NULL, 1, NULL);
   xTaskCreate(ShellHandler, "ShellHandler", 128, NULL, 2, NULL);
   xTaskCreate(LEDHandler, "LEDHandler", 128, NULL, 1, NULL);
   xTaskCreate(LEDTask, "LEDTask", 128, NULL, 1, NULL);
-//  xTaskCreate(SDCARD_Test, "SDCARD_Test", 512, NULL, 1, NULL);
-  //xTaskCreate(WM8978_Demo, "WM8978_Demo", 512, NULL, 1, NULL);
+  xTaskCreate(SDParseHandler, "SDParseHandler", 512, NULL, 1, NULL);
+//  xTaskCreate(WM8978_Demo, "WM8978_Demo", 512, NULL, 1, NULL);
   // xTaskCreate(NECHandler, "NECHandler", 128, NULL, 1, NULL);
 
   vTaskStartScheduler();
@@ -612,6 +608,25 @@ static void MX_USART3_UART_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream2_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+  /* DMA1_Stream5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -635,17 +650,17 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SD_CS_GPIO_Port, SD_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, SD_CS_Pin|GPIO_PIN_0|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Audio_RST_GPIO_Port, Audio_RST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
+  /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin PC6 */
+  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_6;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PDM_OUT_Pin */
   GPIO_InitStruct.Pin = PDM_OUT_Pin;
@@ -655,18 +670,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
   HAL_GPIO_Init(PDM_OUT_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : SD_CS_Pin */
-  GPIO_InitStruct.Pin = SD_CS_Pin;
+  /*Configure GPIO pins : SD_CS_Pin PD0 Audio_RST_Pin */
+  GPIO_InitStruct.Pin = SD_CS_Pin|GPIO_PIN_0|Audio_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(SD_CS_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PB2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
   /*Configure GPIO pin : VBUS_FS_Pin */
   GPIO_InitStruct.Pin = VBUS_FS_Pin;
@@ -681,13 +690,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   GPIO_InitStruct.Alternate = GPIO_AF10_OTG_FS;
   HAL_GPIO_Init(OTG_FS_ID_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : Audio_RST_Pin */
-  GPIO_InitStruct.Pin = Audio_RST_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Audio_RST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : OTG_FS_OverCurrent_Pin */
   GPIO_InitStruct.Pin = OTG_FS_OverCurrent_Pin;

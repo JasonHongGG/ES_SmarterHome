@@ -41,7 +41,15 @@ Shell/Src/cmd.o: ../Shell/Src/cmd.c ../Shell/Inc/cmd.h \
  ../FreeRTOS/include/list.h ../FreeRTOS/include/task.h \
  ../Core/Inc/msgHandler.h ../LCD/Inc/lcd2004.h ../LCD/Inc/i2c_lcd.h \
  ../FreeRTOS/include/semphr.h ../FreeRTOS/include/queue.h \
- ../ESP32/Inc/esp32.h ../LED/led.h
+ ../ESP32/Inc/esp32.h ../LED/led.h ../SD/Inc/sd.h ../FATFS/App/fatfs.h \
+ ../Middlewares/Third_Party/FatFs/src/ff.h \
+ ../Middlewares/Third_Party/FatFs/src/integer.h ../FATFS/Target/ffconf.h \
+ ../Core/Inc/main.h ../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h \
+ ../Middlewares/Third_Party/FatFs/src/diskio.h \
+ ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/user_diskio.h \
+ ../FATFS/Target/user_diskio_spi.h \
+ ../Middlewares/Third_Party/FatFs/src/integer.h \
+ ../Middlewares/Third_Party/FatFs/src/diskio.h
 ../Shell/Inc/cmd.h:
 ../FreeRTOS/include/FreeRTOS.h:
 ../FreeRTOS/include/FreeRTOSConfig.h:
@@ -94,3 +102,16 @@ Shell/Src/cmd.o: ../Shell/Src/cmd.c ../Shell/Inc/cmd.h \
 ../FreeRTOS/include/queue.h:
 ../ESP32/Inc/esp32.h:
 ../LED/led.h:
+../SD/Inc/sd.h:
+../FATFS/App/fatfs.h:
+../Middlewares/Third_Party/FatFs/src/ff.h:
+../Middlewares/Third_Party/FatFs/src/integer.h:
+../FATFS/Target/ffconf.h:
+../Core/Inc/main.h:
+../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h:
+../Middlewares/Third_Party/FatFs/src/diskio.h:
+../Middlewares/Third_Party/FatFs/src/ff.h:
+../FATFS/Target/user_diskio.h:
+../FATFS/Target/user_diskio_spi.h:
+../Middlewares/Third_Party/FatFs/src/integer.h:
+../Middlewares/Third_Party/FatFs/src/diskio.h:

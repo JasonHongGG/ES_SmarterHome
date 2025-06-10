@@ -64,6 +64,13 @@
     "main.h": "c",
     "cstdarg": "c",
     "msghandler.h": "c",
-    "queue.h": "c"
+    "queue.h": "c",
+    "sd.h": "c",
+    "stdio.h": "c",
+    "player.h": "c",
+    "stdlib.h": "c",
+    "string.h": "c",
+    "stm32f4xx_hal.h": "c",
+    "datas.h": "c"
   }
 }
