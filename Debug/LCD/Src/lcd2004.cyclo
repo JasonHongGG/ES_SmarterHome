@@ -1,4 +1,6 @@
-../LCD/Src/lcd2004.c:10:6:LCD2004_Init	1
-../LCD/Src/lcd2004.c:17:6:LCD2004_OS_Resources_Init	1
-../LCD/Src/lcd2004.c:23:6:LCDHandler	2
-../LCD/Src/lcd2004.c:54:6:LCDTemplateHandler	4
+../LCD/Src/lcd2004.c:14:6:LCD2004_Init	1
+../LCD/Src/lcd2004.c:22:6:LCD2004_OS_Resources_Init	1
+../LCD/Src/lcd2004.c:28:6:LCD_ClearLine	2
+../LCD/Src/lcd2004.c:36:6:SetLCDCommandStatus	4
+../LCD/Src/lcd2004.c:80:6:LCDHandler	2
+../LCD/Src/lcd2004.c:111:6:LCDTemplateHandler	4

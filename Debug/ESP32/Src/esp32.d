@@ -28,6 +28,8 @@ ESP32/Src/esp32.o: ../ESP32/Src/esp32.c ../ESP32/Inc/esp32.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h \
+ ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
@@ -39,7 +41,8 @@ ESP32/Src/esp32.o: ../ESP32/Src/esp32.c ../ESP32/Inc/esp32.h \
  ../FreeRTOS/include/mpu_wrappers.h ../FreeRTOS/include/queue.h \
  ../FreeRTOS/include/task.h ../FreeRTOS/include/list.h \
  ../FreeRTOS/include/task.h ../FreeRTOS/include/semphr.h \
- ../FreeRTOS/include/queue.h ../Core/Inc/msgHandler.h
+ ../FreeRTOS/include/queue.h ../Core/Inc/msgHandler.h \
+ ../Shell/Inc/shell.h
 ../ESP32/Inc/esp32.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -70,6 +73,8 @@ ESP32/Src/esp32.o: ../ESP32/Src/esp32.c ../ESP32/Inc/esp32.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_i2s_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc.h:
+../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rtc_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
@@ -88,3 +93,4 @@ ESP32/Src/esp32.o: ../ESP32/Src/esp32.c ../ESP32/Inc/esp32.h \
 ../FreeRTOS/include/semphr.h:
 ../FreeRTOS/include/queue.h:
 ../Core/Inc/msgHandler.h:
+../Shell/Inc/shell.h:

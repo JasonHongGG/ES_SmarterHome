@@ -6,6 +6,7 @@
  */
 #include "esp32.h"
 #include "msgHandler.h"
+#include "shell.h"
 
 
 UART_HandleTypeDef* eps32_TxRx_huart;
@@ -14,6 +15,7 @@ QueueHandle_t xESP32Queue;
 QueueHandle_t xESP32ReceiverQueue;
 SemaphoreHandle_t xESP32Mutex;
 extern SemaphoreHandle_t ReceiveMsgTimeoutMutex;
+extern QueueHandle_t xShellQueue;
 char ESP32_reveice_data[100];
 
 void ESP32_Init(UART_HandleTypeDef* eps32_huart, UART_HandleTypeDef* log_huart)
@@ -107,7 +109,15 @@ void ESP32Receiver(void *pvParameters)
   {
     if (xQueueReceive(xESP32ReceiverQueue, &rxMsg, portMAX_DELAY) == pdPASS)
     {
-      SendMsg(esp32_log_huart, "\r\nReceive : ESP32: %s\r\n", rxMsg.msg);
+    	SendMsg(esp32_log_huart, "\r\nReceive : ESP32: %s\r\n", rxMsg.msg);
+		
+    	ShellMsgStruct shellMsg;
+    	strncpy(shellMsg.msg, rxMsg.msg, sizeof(rxMsg.msg)-1);
+    	shellMsg.msg[sizeof(shellMsg.msg)-1] = '\0';
+    	if (xQueueSend(xShellQueue, &shellMsg, 0) != pdPASS) {
+			SendMsg(esp32_log_huart, "\r\ESP32Receiver: Queue full or error.\r\n");
+		}
     }
+    vTaskDelay(pdMS_TO_TICKS(500));
   }
 }

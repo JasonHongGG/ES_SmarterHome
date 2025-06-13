@@ -23,7 +23,7 @@
 extern I2C_HandleTypeDef hi2c1;
 extern I2C_HandleTypeDef hi2c2;
 extern I2S_HandleTypeDef hi2s3;
-static I2C_HandleTypeDef* player_hi2s = &hi2c1;
+static I2C_HandleTypeDef* player_hi2s = &hi2c2;
 extern UART_HandleTypeDef huart2;
 
 HAL_StatusTypeDef WM8978_Register_Wirter(uint8_t reg_addr, uint16_t data)
@@ -50,18 +50,15 @@ void my_WM8978_Init(void)
     SendMsg(&huart2, "I2C2 State: %d\r\n", player_hi2s->State);
 
     SendMsg(&huart2, "my_WM8978_Init: Checking I2C device readiness...\r\n");
-    for (int i = 0; i < 256; i++){
-    	status = HAL_I2C_IsDeviceReady(player_hi2s, i, 3, 100); // 嘗試3次，超時100ms
-		if (status != HAL_OK) {
-			SendMsg(&huart2, "my_WM8978_Init: WM8978 not ready on I2C bus! Status: %d  (%2d)\r\n", status, i);
-			// 在這裡可以考慮直接返回，因為後續操作都會失敗
-			//return;
-		} else {
-			SendMsg(&huart2, "my_WM8978_Init: WM8978 I2C device ready.\r\n");
-		}
 
-		//vTaskDelay(pdMS_TO_TICKS(500));
-    }
+	status = HAL_I2C_IsDeviceReady(player_hi2s, WM8978_WIRTE_ADDRESS, 3, 100); // 嘗試3次，超時100ms
+	if (status != HAL_OK) {
+		SendMsg(&huart2, "my_WM8978_Init: WM8978 not ready on I2C bus! Status: %d  (%2d)\r\n", status, WM8978_WIRTE_ADDRESS);
+		// 在這裡可以考慮直接返回，因為後續操作都會失敗
+		//return;
+	} else {
+		SendMsg(&huart2, "my_WM8978_Init: WM8978 I2C device ready.\r\n");
+	}
 
 
     SendMsg(&huart2, "my_WM8978_Init: Writing Reg 0 (Reset)\r\n");

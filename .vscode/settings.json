@@ -71,6 +71,8 @@
     "stdlib.h": "c",
     "string.h": "c",
     "stm32f4xx_hal.h": "c",
-    "datas.h": "c"
+    "datas.h": "c",
+    "cmd.h": "c",
+    "lcd2004.h": "c"
   }
 }

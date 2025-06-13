@@ -6,12 +6,7 @@
  */
 #include "readLine.h"
 #include "msgHandler.h"
-#define portMAX_DELAY (uint32_t)0xffffffffUL
-#define PROMPT_LEN (0xFFU)
-#define READBUF_LEN (1024U)
-#define MAX_ARGS 10
 static char prompt[PROMPT_LEN] = "> ";
-static char readBuffer[READBUF_LEN] = {0};
 extern UART_HandleTypeDef* shell_huart;
 
 void ReadLine_Init(UART_HandleTypeDef* huart)
@@ -36,7 +31,7 @@ static void PutString(const char *const pcChar)
 	SendMsg(shell_huart, pcChar);
 }
 
-uint32_t ReadLine()
+uint32_t ReadLine(char* readBuffer, int bufferSize)
 {
 
 	char *pCur = readBuffer; /* the point to ready receive. */
@@ -44,7 +39,7 @@ uint32_t ReadLine()
 	uint32_t receiveCharCnt = 0;
 	uint32_t PromptLen = 0;
 	uint32_t outputColumnCnt = 0;
-	memset(readBuffer, 0, sizeof(readBuffer));
+	memset(readBuffer, 0, bufferSize);
 	/* print Prompt */
 	if (*prompt)
 	{
@@ -74,7 +69,7 @@ uint32_t ReadLine()
 				}
 				else /* Buffer full (Overflow) */
 				{
-					memset(readBuffer, 0, sizeof(readBuffer));
+					memset(readBuffer, 0, bufferSize);
 					return 0;
 				}
 
@@ -83,7 +78,7 @@ uint32_t ReadLine()
 				{
 					outputColumnCnt--;
 				}
-				memset(readBuffer, 0, sizeof(readBuffer));
+				memset(readBuffer, 0, bufferSize);
 				pCur = readBuffer;
 				receiveCharCnt = 0x00;
 				PutString("\n\r> ");
@@ -103,7 +98,7 @@ uint32_t ReadLine()
 				break;
 
 			default:
-				if (receiveCharCnt < sizeof(readBuffer) &&
+				if (receiveCharCnt < bufferSize &&
 					(pCur >= &readBuffer[0]) &&
 					(pCur <= &readBuffer[READBUF_LEN]) &&
 					(cChar > 0x19 && cChar < 0x7F))
@@ -128,7 +123,7 @@ uint32_t ReadLine()
 	return 0;
 }
 
-bool ArgAnalyze(uint8_t *argc, char *argv[])
+bool ArgAnalyze(char* readBuffer, uint8_t *argc, char *argv[])
 {
 	uint32_t i = 0;
 

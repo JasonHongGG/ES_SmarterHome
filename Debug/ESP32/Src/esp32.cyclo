@@ -1,5 +1,5 @@
-../ESP32/Src/esp32.c:19:6:ESP32_Init	1
-../ESP32/Src/esp32.c:25:6:ESP32_OS_Resources_Init	1
-../ESP32/Src/esp32.c:40:6:ESP32Sender	3
-../ESP32/Src/esp32.c:58:6:HAL_UARTEx_RxEventCallback	3
-../ESP32/Src/esp32.c:103:6:ESP32Receiver	2
+../ESP32/Src/esp32.c:21:6:ESP32_Init	1
+../ESP32/Src/esp32.c:27:6:ESP32_OS_Resources_Init	1
+../ESP32/Src/esp32.c:42:6:ESP32Sender	3
+../ESP32/Src/esp32.c:60:6:HAL_UARTEx_RxEventCallback	3
+../ESP32/Src/esp32.c:105:6:ESP32Receiver	3

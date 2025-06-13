@@ -64,6 +64,8 @@ I2S_HandleTypeDef hi2s3;
 DMA_HandleTypeDef hdma_spi3_tx;
 DMA_HandleTypeDef hdma_i2s3_ext_rx;
 
+RTC_HandleTypeDef hrtc;
+
 SPI_HandleTypeDef hspi1;
 SPI_HandleTypeDef hspi2;
 
@@ -90,6 +92,7 @@ static void MX_I2C1_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_I2S3_Init(void);
+static void MX_RTC_Init(void);
 /* USER CODE BEGIN PFP */
 /* USER CODE END PFP */
 
@@ -175,30 +178,33 @@ int main(void)
   MX_SPI2_Init();
   MX_FATFS_Init();
   MX_I2S3_Init();
+  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   // init
   MsgHandler_Init(&huart2);
   ESP32_Init(&huart3, &huart2);
-  LCD2004_Init(&hi2c1, 0x4E);
+  LCD2004_Init(&hi2c1, 0x4E, &huart2);
   LED_Init();
   SD_Init(&huart2);
   Shell_Init(&huart2);
 
 
-//  my_WM8978_Init();
+  my_WM8978_Init();
   //OS Resource
   MsgHandler_OS_Resources_Init();
-  ESP32_OS_Resources_Init();
   LCD2004_OS_Resources_Init();
   LED_OS_Resources_Init();
   SD_OS_Resources_Init();
+  Shell_OS_Resources_Init();
+  ESP32_OS_Resources_Init();
 
 //   WM8978_Palyer();
   //Task
   xTaskCreate(ESP32Sender, "ESP32Sender", 128, NULL, 1, NULL);
   xTaskCreate(ESP32Receiver, "ESP32Receiver", 256, NULL, 2, NULL);
-  xTaskCreate(LCDHandler, "LCDHandler", 128, NULL, 1, NULL);
-  xTaskCreate(ShellHandler, "ShellHandler", 128, NULL, 2, NULL);
+  xTaskCreate(LCDHandler, "LCDHandler", 256, NULL, 1, NULL);
+  xTaskCreate(ShellHandler, "ShellHandler", 256, NULL, 2, NULL);
+  xTaskCreate(CommandReceiver, "CommandReceiver", 512, NULL, 3, NULL);
   xTaskCreate(LEDHandler, "LEDHandler", 128, NULL, 1, NULL);
   xTaskCreate(LEDTask, "LEDTask", 128, NULL, 1, NULL);
   xTaskCreate(SDParseHandler, "SDParseHandler", 512, NULL, 1, NULL);
@@ -236,9 +242,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_LSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
   RCC_OscInitStruct.PLL.PLLM = 8;
@@ -364,6 +371,69 @@ static void MX_I2S3_Init(void)
   /* USER CODE BEGIN I2S3_Init 2 */
 
   /* USER CODE END I2S3_Init 2 */
+
+}
+
+/**
+  * @brief RTC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_RTC_Init(void)
+{
+
+  /* USER CODE BEGIN RTC_Init 0 */
+
+  /* USER CODE END RTC_Init 0 */
+
+  RTC_TimeTypeDef sTime = {0};
+  RTC_DateTypeDef sDate = {0};
+
+  /* USER CODE BEGIN RTC_Init 1 */
+
+  /* USER CODE END RTC_Init 1 */
+
+  /** Initialize RTC Only
+  */
+  hrtc.Instance = RTC;
+  hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
+  hrtc.Init.AsynchPrediv = 127;
+  hrtc.Init.SynchPrediv = 255;
+  hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
+  hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
+  hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
+  if (HAL_RTC_Init(&hrtc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /* USER CODE BEGIN Check_RTC_BKUP */
+
+  /* USER CODE END Check_RTC_BKUP */
+
+  /** Initialize RTC and set the Time and Date
+  */
+  sTime.Hours = 21;
+  sTime.Minutes = 54;
+  sTime.Seconds = 0;
+  sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+  sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+  if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sDate.WeekDay = RTC_WEEKDAY_WEDNESDAY;
+  sDate.Month = RTC_MONTH_JUNE;
+  sDate.Date = 11;
+  sDate.Year = 25;
+
+  if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN RTC_Init 2 */
+
+  /* USER CODE END RTC_Init 2 */
 
 }
 

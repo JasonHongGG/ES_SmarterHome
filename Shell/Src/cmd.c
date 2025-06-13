@@ -155,7 +155,7 @@ bool CommandExecute(uint8_t argc, char **argv)
 				}
 			}
 		}
-		SendMsg(shell_huart, "\r\nUnknown command. Type 'help' for commands.\r\n");
+		SendMsg(shell_huart, "\r\nUnknown command : %s. Type 'help' for commands.\r\n", argv[0]);
 	}
 	return false;
 }

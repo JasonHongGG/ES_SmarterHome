@@ -5,19 +5,76 @@
 QueueHandle_t xLCDQueue;
 SemaphoreHandle_t xLCDMutex;
 I2C_LCD_HandleTypeDef lcd;
-extern UART_HandleTypeDef huart2;
+UART_HandleTypeDef* lcd_huart;
+extern RTC_HandleTypeDef hrtc;
 
-void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address)
+RTC_TimeTypeDef sTime;
+RTC_DateTypeDef sDate;
+
+void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address, UART_HandleTypeDef* haurt)
 {
   lcd.hi2c = hi2c;
   lcd.address = address; //0x4E（0x27 << 1）
   lcd_init(&lcd);
+  lcd_huart = haurt;
 }
 
 void LCD2004_OS_Resources_Init()
 {
   xLCDQueue = xQueueCreate(4, sizeof(LCDMsgStruct));
   xLCDMutex = xSemaphoreCreateMutex();
+}
+
+void LCD_ClearLine(uint8_t row)
+{
+    lcd_gotoxy(&lcd, 0, row);
+    for (int i = 0; i < 20; i++) {
+        lcd_putchar(&lcd, ' ');
+    }
+}
+
+void SetLCDCommandStatus(char* str)
+{
+	LCD_ClearLine(0);
+	LCD_ClearLine(1);
+	LCD_ClearLine(3);
+
+	LCDMsgStruct commandMsg;
+	commandMsg.row = 0;
+	commandMsg.col = 0;
+	char buf[50];
+	sprintf(buf, "Command : %s", str);
+	strncpy(commandMsg.msg, buf, sizeof(commandMsg.msg)-1);
+	commandMsg.msg[sizeof(commandMsg.msg)-1] = '\0';
+
+	if (xQueueSend(xLCDQueue, &commandMsg, 0) != pdPASS) {
+		SendMsg(lcd_huart, "\r\nLCDShowMsg: Queue full or error.\r\n");
+	}
+
+	LCDMsgStruct statusMSg;
+	statusMSg.row = 1;
+	statusMSg.col = 0;
+	strncpy(statusMSg.msg, "Status : Success", sizeof(statusMSg.msg)-1);
+	statusMSg.msg[sizeof(statusMSg.msg)-1] = '\0';
+
+	if (xQueueSend(xLCDQueue, &statusMSg, 0) != pdPASS) {
+		SendMsg(lcd_huart, "\r\nLCDShowMsg: Queue full or error.\r\n");
+	}
+
+
+
+	LCDMsgStruct timeMSg;
+	timeMSg.row = 3;
+	timeMSg.col = 0;
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	snprintf(timeMSg.msg, sizeof(timeMSg.msg), "%02d/%02d %02d:%02d:%02d",
+			sDate.Month, sDate.Date, sTime.Hours, sTime.Minutes, sTime.Seconds);
+	timeMSg.msg[sizeof(timeMSg.msg)-1] = '\0';
+
+	if (xQueueSend(xLCDQueue, &timeMSg, 0) != pdPASS) {
+		SendMsg(lcd_huart, "\r\nLCDShowMsg: Queue full or error.\r\n");
+	}
 }
 
 void LCDHandler(void *pvParameters)

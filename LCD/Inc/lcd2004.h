@@ -26,9 +26,11 @@ typedef struct
 	char msg[32];
 } LCDMsgStruct;
 
-void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address);
+void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address, UART_HandleTypeDef* haurt);
 
 void LCD2004_OS_Resources_Init();
+
+void SetLCDCommandStatus(char* str);
 
 void LCDHandler(void *pvParameters);
 
