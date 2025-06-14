@@ -4,11 +4,13 @@
 #include "esp32.h"
 #include "led.h"
 #include "sd.h"
+#include "log.h"
 extern UART_HandleTypeDef* shell_huart;
 extern QueueHandle_t xLCDQueue;
 extern QueueHandle_t xESP32Queue;
 extern QueueHandle_t xLEDQueue;
 extern QueueHandle_t xSDQueue;
+extern QueueHandle_t xLogQueue;
 
 static void CommandPrint(uint8_t argc, char **argv);
 static uint8_t PrintArgs(uint8_t argc, char **argv);
@@ -16,6 +18,8 @@ void LCDShowMsg(uint8_t argc, char **argv);
 void ESP32SendMsg(uint8_t argc, char **argv);
 void LEDChangeColor(uint8_t argc, char **argv);
 void ParseStorage(uint8_t argc, char **argv);
+void WriteLog(uint8_t argc, char **argv);
+void PrintLog(uint8_t argc, char **argv);
 
 static const CmdStruct CommandList[] =
 {
@@ -25,6 +29,8 @@ static const CmdStruct CommandList[] =
 	{"esp32", "Send message to ESP32 (Command => esp32 message)", ESP32SendMsg},
 	{"led", "Change LED color (Command => led red green blue)", LEDChangeColor},
 	{"sd", "Parse file from SD (Command => sd fileName)", ParseStorage},
+	{"log", "Write log (Command => log message)", WriteLog},
+	{"logPrint", "Write log (Command => log message)", PrintLog},
 	{NULL, NULL, NULL},
 };
 
@@ -33,12 +39,28 @@ void command_Init(UART_HandleTypeDef* huart)
 	shell_huart = huart;
 }
 
+void PrintLog(uint8_t argc, char **argv)
+{
+	PrintLogFile();
+}
+
+void WriteLog(uint8_t argc, char **argv)
+{
+	if(argc < 2) {
+		SendMsg(shell_huart, "\r\WriteLog: Not enough arguments for this command.\r\n");
+		return;
+	}
+	LogWriter(argv[1]);
+}
+
 void ParseStorage(uint8_t argc, char **argv)
 {
 	if(argc < 2) {
-		SendMsg(shell_huart, "\r\ParseStorage: Not enough arguments for this command.\r\n");
+		SendMsg(shell_huart, "\r\nParseStorage: Not enough arguments for this command.\r\n");
 		return;
 	}
+
+	LogWriter("ParseStorage");
 	SDMsgStruct sdMsg;
 	strncpy(sdMsg.msg, argv[1], sizeof(sdMsg.msg)-1);
 	sdMsg.msg[sizeof(sdMsg.msg)-1] = '\0';
@@ -55,6 +77,7 @@ void LEDChangeColor(uint8_t argc, char **argv)
 		return;
 	}
 
+	LogWriter("LEDChangeColor");
 	LEDMsgStruct LEDMsg;
 	LEDMsg.r = (int)atoi(argv[1]);
 	LEDMsg.g = (int)atoi(argv[2]);
@@ -72,6 +95,7 @@ void ESP32SendMsg(uint8_t argc, char **argv)
 		return;
 	}
 
+	LogWriter("ESP32SendMsg");
 	SDMsgStruct esp32Msg;
 	strncpy(esp32Msg.msg, argv[1], sizeof(esp32Msg.msg)-1);
 	esp32Msg.msg[sizeof(esp32Msg.msg)-1] = '\0';
@@ -108,6 +132,7 @@ void LCDShowMsg(uint8_t argc, char **argv)
         return;
     }
 
+	LogWriter("LCDShowMsg");
     LCDMsgStruct lcdMsg;
     lcdMsg.row = (uint8_t)atoi(argv[1]);
     lcdMsg.col = (uint8_t)atoi(argv[2]);
@@ -121,6 +146,7 @@ void LCDShowMsg(uint8_t argc, char **argv)
 
 static void CommandPrint(uint8_t argc, char **argv)
 {
+	LogWriter("Help");
 	SendMsg(shell_huart, "\r\n------------------------------------------------------------------\r\n");
 	for (uint8_t i=0; CommandList[i].name != NULL; i++)
 	{
@@ -132,6 +158,7 @@ static void CommandPrint(uint8_t argc, char **argv)
 
 static uint8_t PrintArgs(uint8_t argc, char **argv)
 {
+	LogWriter("PrintArgs");
 	SendMsg(shell_huart, "\r\n");
 	for (uint8_t i=0; i<argc; i++)
 	{

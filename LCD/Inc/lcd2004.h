@@ -18,6 +18,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "task.h"
+#include "timer.h"
 
 typedef struct
 {

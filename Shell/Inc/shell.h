@@ -16,6 +16,8 @@ typedef struct
 
 void Shell_Init(UART_HandleTypeDef* huart);
 
+void Shell_OS_Resources_Init();
+
 void ShellHandler(void *pvParameters);
 
 void CommandReceiver(void *pvParameters);

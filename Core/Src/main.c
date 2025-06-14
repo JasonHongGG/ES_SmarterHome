@@ -38,7 +38,9 @@
 #include "esp32.h"
 #include "led.h"
 #include "sd.h"
+#include "log.h"
 #include "player.h"
+#include "timer.h"
 
 /* USER CODE END Includes */
 
@@ -181,6 +183,8 @@ int main(void)
   MX_RTC_Init();
   /* USER CODE BEGIN 2 */
   // init
+  Timer_Init(&huart2);
+  Log_Init(&huart2);
   MsgHandler_Init(&huart2);
   ESP32_Init(&huart3, &huart2);
   LCD2004_Init(&hi2c1, 0x4E, &huart2);
@@ -189,8 +193,9 @@ int main(void)
   Shell_Init(&huart2);
 
 
-  my_WM8978_Init();
+//  my_WM8978_Init();
   //OS Resource
+  Log_OS_Resources_Init();
   MsgHandler_OS_Resources_Init();
   LCD2004_OS_Resources_Init();
   LED_OS_Resources_Init();
@@ -203,11 +208,13 @@ int main(void)
   xTaskCreate(ESP32Sender, "ESP32Sender", 128, NULL, 1, NULL);
   xTaskCreate(ESP32Receiver, "ESP32Receiver", 256, NULL, 2, NULL);
   xTaskCreate(LCDHandler, "LCDHandler", 256, NULL, 1, NULL);
-  xTaskCreate(ShellHandler, "ShellHandler", 256, NULL, 2, NULL);
+  xTaskCreate(ShellHandler, "ShellHandler", 512, NULL, 2, NULL);
   xTaskCreate(CommandReceiver, "CommandReceiver", 512, NULL, 3, NULL);
   xTaskCreate(LEDHandler, "LEDHandler", 128, NULL, 1, NULL);
   xTaskCreate(LEDTask, "LEDTask", 128, NULL, 1, NULL);
   xTaskCreate(SDParseHandler, "SDParseHandler", 512, NULL, 1, NULL);
+  xTaskCreate(LogHandler, "LogHandler", 512, NULL, 3, NULL);
+
 //  xTaskCreate(WM8978_Demo, "WM8978_Demo", 512, NULL, 1, NULL);
   // xTaskCreate(NECHandler, "NECHandler", 128, NULL, 1, NULL);
 

@@ -25,6 +25,8 @@ typedef struct
 
 void ESP32_Init(UART_HandleTypeDef* eps32_huart, UART_HandleTypeDef* log_huart);
 
+void ESP32_OS_Resources_Init();
+
 void ESP32Sender(void *pvParameters);
 
 void ESP32Receiver(void *pvParameters);

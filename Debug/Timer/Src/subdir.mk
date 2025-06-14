@@ -5,23 +5,23 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../FreeRTOS/portable/MemMang/heap_4.c 
+../Timer/Src/timer.c 
 
 OBJS += \
-./FreeRTOS/portable/MemMang/heap_4.o 
+./Timer/Src/timer.o 
 
 C_DEPS += \
-./FreeRTOS/portable/MemMang/heap_4.d 
+./Timer/Src/timer.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-FreeRTOS/portable/MemMang/%.o FreeRTOS/portable/MemMang/%.su FreeRTOS/portable/MemMang/%.cyclo: ../FreeRTOS/portable/MemMang/%.c FreeRTOS/portable/MemMang/subdir.mk
+Timer/Src/%.o Timer/Src/%.su Timer/Src/%.cyclo: ../Timer/Src/%.c Timer/Src/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F407xx -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -I"../FreeRTOS/include" -I"../FreeRTOS/portable" -I"../FreeRTOS/portable/ARM_CM4F" -I"../Shell/Inc" -I../LCD/Inc -I../LED -I"../ESP32/Inc" -I../FATFS/Target -I../FATFS/App -I../Middlewares/Third_Party/FatFs/src -I"../WM8978/Inc" -I"../SD/Inc" -I../Timer/Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
-clean: clean-FreeRTOS-2f-portable-2f-MemMang
+clean: clean-Timer-2f-Src
 
-clean-FreeRTOS-2f-portable-2f-MemMang:
-	-$(RM) ./FreeRTOS/portable/MemMang/heap_4.cyclo ./FreeRTOS/portable/MemMang/heap_4.d ./FreeRTOS/portable/MemMang/heap_4.o ./FreeRTOS/portable/MemMang/heap_4.su
+clean-Timer-2f-Src:
+	-$(RM) ./Timer/Src/timer.cyclo ./Timer/Src/timer.d ./Timer/Src/timer.o ./Timer/Src/timer.su
 
-.PHONY: clean-FreeRTOS-2f-portable-2f-MemMang
+.PHONY: clean-Timer-2f-Src
 

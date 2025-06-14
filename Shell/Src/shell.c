@@ -18,14 +18,14 @@ void Shell_Init(UART_HandleTypeDef *huart)
 	shell_huart = huart;
 	ReadLine_Init(huart);
 	command_Init(huart);
-
-	const char *welcome_msg = "\r\nSTM32 Shell Initialized. Type 'help' for commands.\r\n";
-	SendMsg(shell_huart, welcome_msg);
 }
 
 void Shell_OS_Resources_Init()
 {
 	xShellQueue = xQueueCreate(4, sizeof(ShellMsgStruct));
+
+	const char *welcome_msg = "\r\nSTM32 Shell Initialized. Type 'help' for commands.\r\n";
+	SendMsg(shell_huart, welcome_msg);
 }
 
 void ShellHandler(void *pvParameters)

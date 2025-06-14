@@ -1,6 +1,6 @@
-../LCD/Src/lcd2004.c:14:6:LCD2004_Init	24	static
-../LCD/Src/lcd2004.c:22:6:LCD2004_OS_Resources_Init	8	static
-../LCD/Src/lcd2004.c:28:6:LCD_ClearLine	24	static
-../LCD/Src/lcd2004.c:36:6:SetLCDCommandStatus	208	static
-../LCD/Src/lcd2004.c:80:6:LCDHandler	56	static
-../LCD/Src/lcd2004.c:111:6:LCDTemplateHandler	24	static
+../LCD/Src/lcd2004.c:13:6:LCD2004_Init	24	static
+../LCD/Src/lcd2004.c:21:6:LCD2004_OS_Resources_Init	8	static
+../LCD/Src/lcd2004.c:27:6:LCD_ClearLine	24	static
+../LCD/Src/lcd2004.c:35:6:SetLCDCommandStatus	176	static
+../LCD/Src/lcd2004.c:77:6:LCDHandler	56	static
+../LCD/Src/lcd2004.c:108:6:LCDTemplateHandler	24	static

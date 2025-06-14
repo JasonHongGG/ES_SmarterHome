@@ -1,5 +1,5 @@
-../Shell/Src/shell.c:16:6:Shell_Init	24	static
-../Shell/Src/shell.c:26:6:Shell_OS_Resources_Init	8	static
+../Shell/Src/shell.c:16:6:Shell_Init	16	static
+../Shell/Src/shell.c:23:6:Shell_OS_Resources_Init	16	static
 ../Shell/Src/shell.c:31:6:ShellHandler	16	static
 ../Shell/Src/shell.c:53:6:TryGetCommand	152	static
 ../Shell/Src/shell.c:69:6:ParserCommand	48	static

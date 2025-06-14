@@ -37,5 +37,6 @@ Middlewares/Third_Party/FatFs/src \
 Middlewares/Third_Party/FatFs/src/option \
 SD/Src \
 Shell/Src \
+Timer/Src \
 WM8978/Src \
 

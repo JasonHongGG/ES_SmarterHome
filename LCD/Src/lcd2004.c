@@ -7,9 +7,8 @@ SemaphoreHandle_t xLCDMutex;
 I2C_LCD_HandleTypeDef lcd;
 UART_HandleTypeDef* lcd_huart;
 extern RTC_HandleTypeDef hrtc;
-
-RTC_TimeTypeDef sTime;
-RTC_DateTypeDef sDate;
+extern RTC_TimeTypeDef sTime;
+extern RTC_DateTypeDef sDate;
 
 void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address, UART_HandleTypeDef* haurt)
 {
@@ -68,9 +67,7 @@ void SetLCDCommandStatus(char* str)
 	timeMSg.col = 0;
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-	snprintf(timeMSg.msg, sizeof(timeMSg.msg), "%02d/%02d %02d:%02d:%02d",
-			sDate.Month, sDate.Date, sTime.Hours, sTime.Minutes, sTime.Seconds);
-	timeMSg.msg[sizeof(timeMSg.msg)-1] = '\0';
+	getCurrentTime(timeMSg.msg, sizeof(timeMSg.msg));
 
 	if (xQueueSend(xLCDQueue, &timeMSg, 0) != pdPASS) {
 		SendMsg(lcd_huart, "\r\nLCDShowMsg: Queue full or error.\r\n");

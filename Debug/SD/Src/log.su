@@ -1,0 +1,5 @@
+../SD/Src/log.c:14:6:Log_Init	16	static
+../SD/Src/log.c:19:6:Log_OS_Resources_Init	576	static
+../SD/Src/log.c:38:6:LogWriter	544	static
+../SD/Src/log.c:57:7:PrintLogFile	704	static
+../SD/Src/log.c:83:7:LogHandler	688	static

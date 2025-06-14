@@ -41,7 +41,7 @@ LCD/Src/lcd2004.o: ../LCD/Src/lcd2004.c ../LCD/Inc/lcd2004.h \
  ../FreeRTOS/include/mpu_wrappers.h ../FreeRTOS/include/queue.h \
  ../FreeRTOS/include/task.h ../FreeRTOS/include/list.h \
  ../FreeRTOS/include/semphr.h ../FreeRTOS/include/queue.h \
- ../FreeRTOS/include/task.h ../Core/Inc/msgHandler.h
+ ../FreeRTOS/include/task.h ../Timer/Inc/timer.h ../Core/Inc/msgHandler.h
 ../LCD/Inc/lcd2004.h:
 ../LCD/Inc/i2c_lcd.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -92,4 +92,5 @@ LCD/Src/lcd2004.o: ../LCD/Src/lcd2004.c ../LCD/Inc/lcd2004.h \
 ../FreeRTOS/include/semphr.h:
 ../FreeRTOS/include/queue.h:
 ../FreeRTOS/include/task.h:
+../Timer/Inc/timer.h:
 ../Core/Inc/msgHandler.h:
