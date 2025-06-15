@@ -1,6 +1,9 @@
-../Shell/Src/readLine.c:12:6:ReadLine_Init	16	static
-../Shell/Src/readLine.c:17:13:GetChar	16	static
-../Shell/Src/readLine.c:24:13:PutChar	16	static
-../Shell/Src/readLine.c:29:13:PutString	16	static
-../Shell/Src/readLine.c:34:10:ReadLine	40	static
-../Shell/Src/readLine.c:126:6:ArgAnalyze	32	static
+../Shell/Src/readLine.c:20:6:ReadLine_Init	24	static
+../Shell/Src/readLine.c:26:6:CommandHistory_Add	24	static
+../Shell/Src/readLine.c:41:6:CommandHistory_Prev	16	static
+../Shell/Src/readLine.c:53:6:CommandHistory_Next	16	static
+../Shell/Src/readLine.c:66:13:GetChar	16	static
+../Shell/Src/readLine.c:73:13:PutChar	16	static
+../Shell/Src/readLine.c:78:13:PutString	16	static
+../Shell/Src/readLine.c:83:10:ReadLine	112	static
+../Shell/Src/readLine.c:201:6:ArgAnalyze	32	static
