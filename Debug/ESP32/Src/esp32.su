@@ -2,4 +2,4 @@
 ../ESP32/Src/esp32.c:27:6:ESP32_OS_Resources_Init	8	static
 ../ESP32/Src/esp32.c:42:6:ESP32Sender	120	static
 ../ESP32/Src/esp32.c:60:6:HAL_UARTEx_RxEventCallback	120	static,ignoring_inline_asm
-../ESP32/Src/esp32.c:105:6:ESP32Receiver	320	static
+../ESP32/Src/esp32.c:104:6:ESP32Receiver	320	static

@@ -59,6 +59,7 @@ bool TryGetCommand(ShellMsgStruct* pShellMsg, char* cmd)
 	char *token = strtok(buf, " ");
 	if (token != NULL) {
 		int len = strlen(token);
+		if(len > 40) return false;
 		strncpy(cmd, token, len + 1);
         cmd[len] = '\0';
 		return true;

@@ -66,7 +66,6 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
     memcpy(msg.msg, ESP32_reveice_data, Size);
     msg.msg[Size] = '\0';
 
-    // 從 ISR 推送到 Queue
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
 	xQueueSendFromISR(xESP32ReceiverQueue, &msg, &xHigherPriorityTaskWoken);
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);

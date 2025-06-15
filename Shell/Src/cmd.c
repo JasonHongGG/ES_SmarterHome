@@ -20,6 +20,7 @@ void LEDChangeColor(uint8_t argc, char **argv);
 void ParseStorage(uint8_t argc, char **argv);
 void WriteLog(uint8_t argc, char **argv);
 void PrintLog(uint8_t argc, char **argv);
+void UploadLog(uint8_t argc, char **argv);
 
 static const CmdStruct CommandList[] =
 {
@@ -30,13 +31,19 @@ static const CmdStruct CommandList[] =
 	{"led", "Change LED color (Command => led red green blue)", LEDChangeColor},
 	{"sd", "Parse file from SD (Command => sd fileName)", ParseStorage},
 	{"log", "Write log (Command => log message)", WriteLog},
-	{"logPrint", "Write log (Command => log message)", PrintLog},
+	{"logPrint", "Write log (Command => logPrint)", PrintLog},
+	{"logUpload", "Upload log (Command => logUpload)", UploadLog},
 	{NULL, NULL, NULL},
 };
 
 void command_Init(UART_HandleTypeDef* huart)
 {
 	shell_huart = huart;
+}
+
+void UploadLog(uint8_t argc, char **argv)
+{
+	UploadLogFile();
 }
 
 void PrintLog(uint8_t argc, char **argv)

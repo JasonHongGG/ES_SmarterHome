@@ -2,5 +2,5 @@
 ../Shell/Src/shell.c:23:6:Shell_OS_Resources_Init	16	static
 ../Shell/Src/shell.c:31:6:ShellHandler	16	static
 ../Shell/Src/shell.c:53:6:TryGetCommand	152	static
-../Shell/Src/shell.c:69:6:ParserCommand	48	static
-../Shell/Src/shell.c:83:6:CommandReceiver	256	static
+../Shell/Src/shell.c:70:6:ParserCommand	48	static
+../Shell/Src/shell.c:84:6:CommandReceiver	256	static

@@ -22,6 +22,7 @@
 #include "timer.h"
 #include "fatfs.h"
 #include "msgHandler.h"
+#include "esp32.h"
 
 typedef struct
 {

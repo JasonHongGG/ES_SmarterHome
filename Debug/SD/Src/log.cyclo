@@ -1,5 +1,6 @@
-../SD/Src/log.c:14:6:Log_Init	1
-../SD/Src/log.c:19:6:Log_OS_Resources_Init	2
-../SD/Src/log.c:38:6:LogWriter	2
-../SD/Src/log.c:57:7:PrintLogFile	4
-../SD/Src/log.c:83:7:LogHandler	5
+../SD/Src/log.c:15:6:Log_Init	1
+../SD/Src/log.c:20:6:Log_OS_Resources_Init	2
+../SD/Src/log.c:39:6:LogWriter	2
+../SD/Src/log.c:58:6:PrintLogFile	4
+../SD/Src/log.c:85:6:LogHandler	5
+../SD/Src/log.c:122:6:UploadLogFile	8

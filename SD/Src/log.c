@@ -10,6 +10,7 @@
 UART_HandleTypeDef* log_huart;
 QueueHandle_t xLogQueue;
 SemaphoreHandle_t xLogMutex;
+extern QueueHandle_t xESP32Queue; 
 
 void Log_Init(UART_HandleTypeDef* huart)
 {
@@ -37,24 +38,25 @@ void Log_OS_Resources_Init()
 
 void LogWriter(const char *format, ...)
 {
-  char* buf[100];
-  va_list args;
-  va_start(args, format);
-  vsnprintf(buf, sizeof(buf), format, args);
-  va_end(args);
+	char* buf[100];
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
 
-  char time[20];
-  getTimeSinceStart(time, sizeof(time));
+	char time[20];
+	getTimeSinceStart(time, sizeof(time));
 
-  LogMsgStruct logMsg;
-  snprintf(logMsg.msg, sizeof(logMsg.msg), "%s  %s\n\r", time, buf);
-  if (xQueueSend(xLogQueue, &logMsg, pdMS_TO_TICKS(100)) != pdPASS)
-  {
-	  SendMsg(log_huart, "Failed to send log message!\r\n");
-  }
+	LogMsgStruct logMsg;
+	snprintf(logMsg.msg, sizeof(logMsg.msg), "%s  %s\n\r", time, buf);
+	if (xQueueSend(xLogQueue, &logMsg, pdMS_TO_TICKS(100)) != pdPASS)
+	{
+		SendMsg(log_huart, "Failed to send log message!\r\n");
+	}
 }
 
- void PrintLogFile(void) {
+void PrintLogFile(void) 
+{
 	FIL logFile;
 	FRESULT fr;
 	UINT br;
@@ -78,9 +80,10 @@ void LogWriter(const char *format, ...)
 	} while (br == sizeof(buffer) - 1);
 	f_close(&logFile);
 	xSemaphoreGive(xLogMutex);
- }
+}
 
- void LogHandler(void *pvParameters) {
+void LogHandler(void *pvParameters) 
+{
 	FIL logFile;
 	FRESULT fr;
 	UINT bw;
@@ -103,11 +106,10 @@ void LogWriter(const char *format, ...)
 			fr = f_write(&logFile, logMsg.msg, strlen(logMsg.msg), &bw);
 			if (fr == FR_OK){
 				f_sync(&logFile);
-				SendMsg(log_huart, "LogTask: Wrote log entry.\r\n");
+//				SendMsg(log_huart, "LogTask: Wrote log entry.\r\n");
 				f_close(&logFile);
 				fileOpened = false;
 				xSemaphoreGive(xLogMutex);
-				PrintLogFile();
 			} else {
 				SendMsg(log_huart, "LogTask: f_write error: %d\r\n", fr);
 				xSemaphoreGive(xLogMutex);
@@ -115,4 +117,57 @@ void LogWriter(const char *format, ...)
 		}
 		vTaskDelay(pdMS_TO_TICKS(500));
 	}
- }
+}
+
+void UploadLogFile(void) 
+{
+	FIL logFile;
+	FRESULT fr;
+	UINT br;
+	char buffer[100];
+
+	xSemaphoreTake(xLogMutex, portMAX_DELAY);
+
+	fr = f_open(&logFile, "log.txt", FA_READ);
+	if (fr != FR_OK) {
+		SendMsg(log_huart, "UploadLogFile: open failed %d\r\n", fr);
+		if (xLogMutex) xSemaphoreGive(xLogMutex);
+		return;
+	}
+
+	ESP32MsgStruct startEventMsg;
+	snprintf(startEventMsg.msg, sizeof(startEventMsg.msg)-1, "LOG_UPLOAD_START\n\r");
+	startEventMsg.msg[sizeof(startEventMsg.msg)-1] = '\0';
+	if (xQueueSend(xESP32Queue, &startEventMsg, pdMS_TO_TICKS(100)) != pdPASS) {
+		SendMsg(log_huart, "UploadLogFile: queue full\r\n");
+	}
+
+	while (1) {
+		fr = f_read(&logFile, buffer, sizeof(buffer)-1, &br);
+		if (fr != FR_OK || br == 0) break;
+		buffer[br] = '\0';
+
+		ESP32MsgStruct msg;
+		strncpy(msg.msg, buffer, sizeof(msg.msg)-1);
+		msg.msg[sizeof(msg.msg)-1] = '\0';
+		SendMsg(log_huart, "\r\n%s\r\n", msg.msg);
+
+		if (xQueueSend(xESP32Queue, &msg, pdMS_TO_TICKS(100)) != pdPASS) {
+			SendMsg(log_huart, "UploadLogFile: queue full\r\n");
+			break;
+		}
+		vTaskDelay(pdMS_TO_TICKS(10)); // 給 ESP32Sender 處理時間
+	}
+
+	ESP32MsgStruct endEventMsg;
+	snprintf(endEventMsg.msg, sizeof(endEventMsg.msg)-1, "LOG_UPLOAD_END\n\r");
+	endEventMsg.msg[sizeof(endEventMsg.msg)-1] = '\0';
+	if (xQueueSend(xESP32Queue, &endEventMsg, pdMS_TO_TICKS(100)) != pdPASS) {
+		SendMsg(log_huart, "UploadLogFile: queue full\r\n");
+	}
+
+	f_close(&logFile);
+	SendMsg(log_huart, "\r\nUploadLogFile: done\r\n");
+
+	xSemaphoreGive(xLogMutex);
+}

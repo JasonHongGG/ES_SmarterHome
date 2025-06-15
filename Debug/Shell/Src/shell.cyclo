@@ -1,6 +1,6 @@
 ../Shell/Src/shell.c:16:6:Shell_Init	1
 ../Shell/Src/shell.c:23:6:Shell_OS_Resources_Init	1
 ../Shell/Src/shell.c:31:6:ShellHandler	3
-../Shell/Src/shell.c:53:6:TryGetCommand	2
-../Shell/Src/shell.c:69:6:ParserCommand	3
-../Shell/Src/shell.c:83:6:CommandReceiver	4
+../Shell/Src/shell.c:53:6:TryGetCommand	3
+../Shell/Src/shell.c:70:6:ParserCommand	3
+../Shell/Src/shell.c:84:6:CommandReceiver	4

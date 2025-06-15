@@ -186,11 +186,11 @@ int main(void)
   Timer_Init(&huart2);
   Log_Init(&huart2);
   MsgHandler_Init(&huart2);
-  ESP32_Init(&huart3, &huart2);
   LCD2004_Init(&hi2c1, 0x4E, &huart2);
   LED_Init();
   SD_Init(&huart2);
   Shell_Init(&huart2);
+  ESP32_Init(&huart3, &huart2);
 
 
 //  my_WM8978_Init();

@@ -50,7 +50,7 @@ SD/Src/log.o: ../SD/Src/log.c ../SD/Inc/log.h \
  ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/user_diskio.h \
  ../FATFS/Target/user_diskio_spi.h \
  ../Middlewares/Third_Party/FatFs/src/integer.h \
- ../Middlewares/Third_Party/FatFs/src/diskio.h
+ ../Middlewares/Third_Party/FatFs/src/diskio.h ../ESP32/Inc/esp32.h
 ../SD/Inc/log.h:
 ../FreeRTOS/include/FreeRTOS.h:
 ../FreeRTOS/include/FreeRTOSConfig.h:
@@ -114,3 +114,4 @@ SD/Src/log.o: ../SD/Src/log.c ../SD/Inc/log.h \
 ../FATFS/Target/user_diskio_spi.h:
 ../Middlewares/Third_Party/FatFs/src/integer.h:
 ../Middlewares/Third_Party/FatFs/src/diskio.h:
+../ESP32/Inc/esp32.h:
