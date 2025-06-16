@@ -192,9 +192,9 @@ int main(void)
   Shell_Init(&huart2);
   ESP32_Init(&huart3, &huart2);
 
-
 //  my_WM8978_Init();
   //OS Resource
+  Timer_OS_Resources_Init();
   Log_OS_Resources_Init();
   MsgHandler_OS_Resources_Init();
   LCD2004_OS_Resources_Init();
@@ -202,6 +202,7 @@ int main(void)
   SD_OS_Resources_Init();
   Shell_OS_Resources_Init();
   ESP32_OS_Resources_Init();
+
 
 //   WM8978_Palyer();
   //Task
@@ -214,6 +215,8 @@ int main(void)
   xTaskCreate(LEDTask, "LEDTask", 128, NULL, 1, NULL);
   xTaskCreate(SDParseHandler, "SDParseHandler", 512, NULL, 1, NULL);
   xTaskCreate(LogHandler, "LogHandler", 512, NULL, 3, NULL);
+  xTaskCreate(SyncTimeHandler, "SyncTimeHandler", 512, NULL, 3, NULL);
+
 
 //  xTaskCreate(WM8978_Demo, "WM8978_Demo", 512, NULL, 1, NULL);
   // xTaskCreate(NECHandler, "NECHandler", 128, NULL, 1, NULL);
@@ -734,10 +737,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, SD_CS_Pin|GPIO_PIN_0|Audio_RST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(RelayController_GPIO_Port, RelayController_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin PC6 */
-  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|GPIO_PIN_6;
+  /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin RelayController_Pin */
+  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|RelayController_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

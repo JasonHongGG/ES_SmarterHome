@@ -17,6 +17,7 @@ typedef struct
 {
 	char *name;
 	char *help;
+	char *usage;
 	CmdFunction *func;
 } CmdStruct;
 

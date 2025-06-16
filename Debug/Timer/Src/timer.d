@@ -39,7 +39,10 @@ Timer/Src/timer.o: ../Timer/Src/timer.c ../Timer/Inc/timer.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/msgHandler.h
+ ../FreeRTOS/include/queue.h ../FreeRTOS/include/task.h \
+ ../FreeRTOS/include/list.h ../FreeRTOS/include/task.h \
+ ../Core/Inc/msgHandler.h ../ESP32/Inc/esp32.h \
+ ../FreeRTOS/include/semphr.h ../FreeRTOS/include/queue.h
 ../Timer/Inc/timer.h:
 ../FreeRTOS/include/FreeRTOS.h:
 ../FreeRTOS/include/FreeRTOSConfig.h:
@@ -83,4 +86,11 @@ Timer/Src/timer.o: ../Timer/Src/timer.c ../Timer/Inc/timer.h \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
+../FreeRTOS/include/queue.h:
+../FreeRTOS/include/task.h:
+../FreeRTOS/include/list.h:
+../FreeRTOS/include/task.h:
 ../Core/Inc/msgHandler.h:
+../ESP32/Inc/esp32.h:
+../FreeRTOS/include/semphr.h:
+../FreeRTOS/include/queue.h:

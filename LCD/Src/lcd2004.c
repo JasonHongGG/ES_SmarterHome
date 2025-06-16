@@ -6,9 +6,6 @@ QueueHandle_t xLCDQueue;
 SemaphoreHandle_t xLCDMutex;
 I2C_LCD_HandleTypeDef lcd;
 UART_HandleTypeDef* lcd_huart;
-extern RTC_HandleTypeDef hrtc;
-extern RTC_TimeTypeDef sTime;
-extern RTC_DateTypeDef sDate;
 
 void LCD2004_Init(I2C_HandleTypeDef *hi2c, uint8_t address, UART_HandleTypeDef* haurt)
 {
@@ -42,7 +39,7 @@ void SetLCDCommandStatus(char* str)
 	commandMsg.row = 0;
 	commandMsg.col = 0;
 	char buf[50];
-	sprintf(buf, "Command : %s", str);
+	sprintf(buf, "Command: %s", str);
 	strncpy(commandMsg.msg, buf, sizeof(commandMsg.msg)-1);
 	commandMsg.msg[sizeof(commandMsg.msg)-1] = '\0';
 
@@ -53,7 +50,7 @@ void SetLCDCommandStatus(char* str)
 	LCDMsgStruct statusMSg;
 	statusMSg.row = 1;
 	statusMSg.col = 0;
-	strncpy(statusMSg.msg, "Status : Success", sizeof(statusMSg.msg)-1);
+	strncpy(statusMSg.msg, "Status: Success", sizeof(statusMSg.msg)-1);
 	statusMSg.msg[sizeof(statusMSg.msg)-1] = '\0';
 
 	if (xQueueSend(xLCDQueue, &statusMSg, 0) != pdPASS) {
@@ -65,8 +62,6 @@ void SetLCDCommandStatus(char* str)
 	LCDMsgStruct timeMSg;
 	timeMSg.row = 3;
 	timeMSg.col = 0;
-	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	getCurrentTime(timeMSg.msg, sizeof(timeMSg.msg));
 
 	if (xQueueSend(xLCDQueue, &timeMSg, 0) != pdPASS) {

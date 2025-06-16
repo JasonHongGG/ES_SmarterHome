@@ -1,3 +1,6 @@
-../Timer/Src/timer.c:17:6:Timer_Init	16	static
-../Timer/Src/timer.c:24:6:getCurrentTime	40	static
-../Timer/Src/timer.c:33:6:getTimeSinceStart	32	static
+../Timer/Src/timer.c:20:6:Timer_Init	16	static
+../Timer/Src/timer.c:25:6:Timer_OS_Resources_Init	8	static
+../Timer/Src/timer.c:36:6:SyncTimeEventSender	112	static
+../Timer/Src/timer.c:43:6:SyncTimeHandler	208	static
+../Timer/Src/timer.c:93:6:getCurrentTime	40	static
+../Timer/Src/timer.c:104:6:getTimeSinceStart	32	static

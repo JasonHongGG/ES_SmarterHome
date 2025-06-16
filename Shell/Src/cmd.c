@@ -5,12 +5,14 @@
 #include "led.h"
 #include "sd.h"
 #include "log.h"
+#include "timer.h"
 extern UART_HandleTypeDef* shell_huart;
 extern QueueHandle_t xLCDQueue;
 extern QueueHandle_t xESP32Queue;
 extern QueueHandle_t xLEDQueue;
 extern QueueHandle_t xSDQueue;
 extern QueueHandle_t xLogQueue;
+extern QueueHandle_t xTimerQueue;
 
 static void CommandPrint(uint8_t argc, char **argv);
 static uint8_t PrintArgs(uint8_t argc, char **argv);
@@ -21,6 +23,9 @@ void ParseStorage(uint8_t argc, char **argv);
 void WriteLog(uint8_t argc, char **argv);
 void PrintLog(uint8_t argc, char **argv);
 void UploadLog(uint8_t argc, char **argv);
+void UpdateTimer(uint8_t argc, char **argv);
+void SynchronizeTimer(uint8_t argc, char **argv);
+void RelaySwitch(uint8_t argc, char **argv);
 
 static const CmdStruct CommandList[] =
 {
@@ -33,12 +38,47 @@ static const CmdStruct CommandList[] =
 	{"log", "Write log (Command => log message)", WriteLog},
 	{"logPrint", "Write log (Command => logPrint)", PrintLog},
 	{"logUpload", "Upload log (Command => logUpload)", UploadLog},
+	{"updateTimer", "Update Timer (Command => Update YYYY/MM/DD HH:MM:SS)", UpdateTimer},
+	{"syncTime", "Synchronize timer (Command => syncTime)", SynchronizeTimer},
+	{"relay", "relay switch (Command => relay 0/1)", RelaySwitch},
 	{NULL, NULL, NULL},
 };
 
 void command_Init(UART_HandleTypeDef* huart)
 {
 	shell_huart = huart;
+}
+
+void RelaySwitch(uint8_t argc, char **argv)
+{
+	if(argc < 2) {
+		SendMsg(shell_huart, "\r\RelaySwitch: Not enough arguments for this command.\r\n");
+		return;
+	}
+
+	int open = (int)atoi(argv[1]);
+	HAL_GPIO_WritePin(RelayController_GPIO_Port, RelayController_Pin, open);
+}
+
+void SynchronizeTimer(uint8_t argc, char **argv)
+{
+	SyncTimeEventSender();
+}
+
+void UpdateTimer(uint8_t argc, char **argv)
+{
+	if(argc < 3) {
+		SendMsg(shell_huart, "\r\nUpdateTimer: Not enough arguments for this command.\r\n");
+		return;
+	}
+
+	TimerMsgStruct timerMsg;
+	snprintf(timerMsg.msg, sizeof(timerMsg.msg), "%s %s", argv[1], argv[2]);
+	timerMsg.msg[sizeof(timerMsg.msg)-1] = '\0';
+
+	if (xQueueSend(xTimerQueue, &timerMsg, 0) != pdPASS) {
+		SendMsg(shell_huart, "\r\nUpdateTimer: Queue full or error.\r\n");
+	}
 }
 
 void UploadLog(uint8_t argc, char **argv)
@@ -157,7 +197,7 @@ static void CommandPrint(uint8_t argc, char **argv)
 	SendMsg(shell_huart, "\r\n------------------------------------------------------------------\r\n");
 	for (uint8_t i=0; CommandList[i].name != NULL; i++)
 	{
-		SendMsg(shell_huart, "    %5s  %s \r\n", CommandList[i].name, CommandList[i].help);
+		SendMsg(shell_huart, "    %12s  %s \r\n", CommandList[i].name, CommandList[i].help);
 	}
 	SendMsg(shell_huart, "------------------------------------------------------------------\r\n");
 }

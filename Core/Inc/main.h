@@ -79,6 +79,8 @@ void Error_Handler(void);
 #define SPI1_MOSI_GPIO_Port GPIOA
 #define SD_CS_Pin GPIO_PIN_10
 #define SD_CS_GPIO_Port GPIOD
+#define RelayController_Pin GPIO_PIN_6
+#define RelayController_GPIO_Port GPIOC
 #define VBUS_FS_Pin GPIO_PIN_9
 #define VBUS_FS_GPIO_Port GPIOA
 #define OTG_FS_ID_Pin GPIO_PIN_10

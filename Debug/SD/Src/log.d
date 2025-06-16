@@ -42,15 +42,15 @@ SD/Src/log.o: ../SD/Src/log.c ../SD/Inc/log.h \
  ../FreeRTOS/include/queue.h ../FreeRTOS/include/task.h \
  ../FreeRTOS/include/list.h ../FreeRTOS/include/semphr.h \
  ../FreeRTOS/include/queue.h ../FreeRTOS/include/task.h \
- ../Timer/Inc/timer.h ../Core/Inc/msgHandler.h ../FATFS/App/fatfs.h \
- ../Middlewares/Third_Party/FatFs/src/ff.h \
+ ../Timer/Inc/timer.h ../Core/Inc/msgHandler.h ../ESP32/Inc/esp32.h \
+ ../FATFS/App/fatfs.h ../Middlewares/Third_Party/FatFs/src/ff.h \
  ../Middlewares/Third_Party/FatFs/src/integer.h ../FATFS/Target/ffconf.h \
  ../Core/Inc/main.h ../Middlewares/Third_Party/FatFs/src/ff_gen_drv.h \
  ../Middlewares/Third_Party/FatFs/src/diskio.h \
  ../Middlewares/Third_Party/FatFs/src/ff.h ../FATFS/Target/user_diskio.h \
  ../FATFS/Target/user_diskio_spi.h \
  ../Middlewares/Third_Party/FatFs/src/integer.h \
- ../Middlewares/Third_Party/FatFs/src/diskio.h ../ESP32/Inc/esp32.h
+ ../Middlewares/Third_Party/FatFs/src/diskio.h
 ../SD/Inc/log.h:
 ../FreeRTOS/include/FreeRTOS.h:
 ../FreeRTOS/include/FreeRTOSConfig.h:
@@ -102,6 +102,7 @@ SD/Src/log.o: ../SD/Src/log.c ../SD/Inc/log.h \
 ../FreeRTOS/include/task.h:
 ../Timer/Inc/timer.h:
 ../Core/Inc/msgHandler.h:
+../ESP32/Inc/esp32.h:
 ../FATFS/App/fatfs.h:
 ../Middlewares/Third_Party/FatFs/src/ff.h:
 ../Middlewares/Third_Party/FatFs/src/integer.h:
@@ -114,4 +115,3 @@ SD/Src/log.o: ../SD/Src/log.c ../SD/Inc/log.h \
 ../FATFS/Target/user_diskio_spi.h:
 ../Middlewares/Third_Party/FatFs/src/integer.h:
 ../Middlewares/Third_Party/FatFs/src/diskio.h:
-../ESP32/Inc/esp32.h:
