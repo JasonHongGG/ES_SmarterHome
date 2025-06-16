@@ -9,6 +9,6 @@
 ../Shell/Src/cmd.c:120:6:LEDChangeColor	32	static
 ../Shell/Src/cmd.c:138:6:ESP32SendMsg	120	static
 ../Shell/Src/cmd.c:155:6:LCDShowMsg	72	static
-../Shell/Src/cmd.c:194:13:CommandPrint	32	static
-../Shell/Src/cmd.c:206:16:PrintArgs	24	static
-../Shell/Src/cmd.c:217:6:CommandExecute	24	static
+../Shell/Src/cmd.c:194:13:CommandPrint	40	static
+../Shell/Src/cmd.c:208:16:PrintArgs	24	static
+../Shell/Src/cmd.c:219:6:CommandExecute	24	static

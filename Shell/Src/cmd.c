@@ -29,18 +29,18 @@ void RelaySwitch(uint8_t argc, char **argv);
 
 static const CmdStruct CommandList[] =
 {
-	{"help", "Show this help message", CommandPrint},
-	{"args", "Show all args", PrintArgs},
-	{"lcd", "Show message on LCD2004 (Command => lcd row column message)", LCDShowMsg},
-	{"esp32", "Send message to ESP32 (Command => esp32 message)", ESP32SendMsg},
-	{"led", "Change LED color (Command => led red green blue)", LEDChangeColor},
-	{"sd", "Parse file from SD (Command => sd fileName)", ParseStorage},
-	{"log", "Write log (Command => log message)", WriteLog},
-	{"logPrint", "Write log (Command => logPrint)", PrintLog},
-	{"logUpload", "Upload log (Command => logUpload)", UploadLog},
-	{"updateTimer", "Update Timer (Command => Update YYYY/MM/DD HH:MM:SS)", UpdateTimer},
-	{"syncTime", "Synchronize timer (Command => syncTime)", SynchronizeTimer},
-	{"relay", "relay switch (Command => relay 0/1)", RelaySwitch},
+	{"help", "Show this help message", "help", CommandPrint},
+	{"args", "Show all args", "args", PrintArgs},
+	{"lcd", "Show message on LCD2004", "lcd row column message", LCDShowMsg},
+	{"esp32", "Send message to ESP32", "esp32 message", ESP32SendMsg},
+	{"led", "Change LED color", "led red green blue",  LEDChangeColor},
+	{"sd", "Parse file from SD", "sd fileName", ParseStorage},
+	{"log", "Write log", "log message",  WriteLog},
+	{"logPrint", "Write log", "logPrint", PrintLog},
+	{"logUpload", "Upload log", "logUpload", UploadLog},
+	{"updateTimer", "Update Timer", "Update YYYY/MM/DD HH:MM:SS", UpdateTimer},
+	{"syncTime", "Synchronize timer", "syncTime", SynchronizeTimer},
+	{"relay", "relay switch", "relay 0/1", RelaySwitch},
 	{NULL, NULL, NULL},
 };
 
@@ -194,12 +194,14 @@ void LCDShowMsg(uint8_t argc, char **argv)
 static void CommandPrint(uint8_t argc, char **argv)
 {
 	LogWriter("Help");
-	SendMsg(shell_huart, "\r\n------------------------------------------------------------------\r\n");
+	SendMsg(shell_huart, "\r\n--------------------------------------------------------------------------------------\r\n");
+	SendMsg(shell_huart, "    %12s|  %29s|  %29s\r\n", "NAME", "HELP", "USAGE");
+	SendMsg(shell_huart, "--------------------------------------------------------------------------------------\r\n");
 	for (uint8_t i=0; CommandList[i].name != NULL; i++)
 	{
-		SendMsg(shell_huart, "    %12s  %s \r\n", CommandList[i].name, CommandList[i].help);
+		SendMsg(shell_huart, "    %12s  %30s  %30s\r\n", CommandList[i].name, CommandList[i].help, CommandList[i].usage);
 	}
-	SendMsg(shell_huart, "------------------------------------------------------------------\r\n");
+	SendMsg(shell_huart, "--------------------------------------------------------------------------------------\r\n");
 }
 
 
